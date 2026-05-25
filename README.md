@@ -122,6 +122,7 @@ npm run dev
 ```bash
 cd site
 npm run lint
+npm run test
 npm run build
 npm audit --audit-level=moderate
 ```

@@ -29,6 +29,7 @@ src/
 ```bash
 npm run dev      # servidor local Vite
 npm run lint     # ESLint
+npm run test     # Vitest
 npm run build    # TypeScript + build de produção
 npm run preview  # preview do build
 ```
@@ -54,5 +55,6 @@ Antes de entregar alterações no frontend, rode:
 
 ```bash
 npm run lint
+npm run test
 npm run build
 ```

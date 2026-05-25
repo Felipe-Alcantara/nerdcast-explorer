@@ -24,6 +24,8 @@ Deploy alvo: GitHub Pages ou Vercel (site estático, zero custo).
 [2026-05-25] ✅ Frontend — lista completa com filtros e ordenação
 [2026-05-25] ✅ Frontend — checklist pessoal via localStorage
 [2026-05-25] ✅ Frontend — likes e playlists via localStorage
+[2026-05-25] ✅ Qualidade — frontend modularizado em hooks, componentes focados e utilitários testáveis
+[2026-05-25] ✅ Qualidade — Vitest cobrindo sanitização, playlists, formatação e filtros críticos
 [2026-05-25] ⬜ Frontend — stats e exploração
 [2026-05-25] ⬜ Frontend — guia para iniciantes
 [2026-05-25] ⬜ Deploy do site
@@ -35,6 +37,7 @@ Deploy alvo: GitHub Pages ou Vercel (site estático, zero custo).
 [2026-05-25] Scripts de dados: Python 3.11+
 [2026-05-25] Frontend: React 19 + TypeScript + Tailwind CSS 4 (padrão felixo-standards adaptado ao projeto)
 [2026-05-25] Build/dev: Vite 8 (padrão felixo-standards adaptado ao projeto)
+[2026-05-25] Testes frontend: Vitest + jsdom
 [2026-05-25] Dados: JSON estático gerado por Python — sem backend, sem banco
 [2026-05-25] Checklist: localStorage no browser — sem login, sem servidor
 [2026-05-25] Hosting: GitHub Pages ou Vercel (a definir)
@@ -53,6 +56,9 @@ Dependências Python a instalar:
 [2026-05-25] Filtro por convidado derivado de `episodes.json` — evita novo arquivo de índice e mantém contagem sincronizada com os episódios carregados.
 [2026-05-25] Playlists pessoais no localStorage (`nerdcast-playlists`) — sem login/backend, alinhado ao checklist local e suficiente para a v1.
 [2026-05-25] Likes de episódio no localStorage (`nerdcast-liked`) — estado independente de ouvido, com filtro dedicado para recuperar favoritos.
+[2026-05-25] `App.tsx` atua como orquestrador; carregamento de dados e filtros ficam em hooks (`useEpisodeData`, `useEpisodeFilters`).
+[2026-05-25] Componentes grandes foram divididos por responsabilidade: cards, descrição, metadados, ações rápidas, filtros, stats e playlists.
+[2026-05-25] Regras puras de filtro, formatação, sanitização e normalização de playlists ficam em `utils/` ou hooks exportáveis com testes dedicados.
 
 ---
 
@@ -75,6 +81,7 @@ Dependências Python a instalar:
 [2026-05-25] ✅ `npm run build` — TypeScript + Vite validaram hook, controles e integração das playlists.
 [2026-05-25] ✅ `npm run lint` — likes de episódio e filtro "Só curtidos" sem erro de lint.
 [2026-05-25] ✅ `npm run build` — TypeScript + Vite validaram hook e integração de likes.
+[2026-05-25] ✅ `npm run test` — Vitest validou sanitização HTML, normalização de playlists, formatação e filtros de episódios.
 [2026-05-25] ✅ `python -m compileall -q start.py scripts` — scripts Python compilam sem erro de sintaxe.
 [2026-05-25] ✅ `npm audit --audit-level=moderate` — nenhuma vulnerabilidade encontrada.
 
@@ -90,12 +97,13 @@ FIX: o frontend busca `content.rendered` sob demanda ao abrir "Ver descricao com
 
 ## 🔗 INTEGRAÇÕES & SERVIÇOS EXTERNOS
 
-[2026-05-25] Feeds RSS do Jovem Nerd — usados para atualização incremental de episódios.
-  Endpoints conhecidos:
-  - `https://jovemnerd.com.br/feed/podcast/nerdcast/`
-  - `https://jovemnerd.com.br/feed/podcast/nerdtech/`
-  - `https://jovemnerd.com.br/feed/podcast/la-do-bunker/`
-  Limitação: feeds retornam apenas os últimos ~100 eps por programa.
+[2026-05-25] API custom do Jovem Nerd — fonte atual para geração dos JSONs estáticos.
+  Base: `https://api.jovemnerd.com.br/wp-json/jovemnerd/v1`
+  Script: `scripts/fetch_api.py`
+  Saída: `data/episodes.json`, `data/guests.json`, `data/themes.json`, `data/programs.json`
+
+[2026-05-25] Feeds RSS do Jovem Nerd — avaliados como fallback/descoberta, mas não são o fluxo atual.
+  Limitação: retornam apenas os últimos ~100 eps por programa.
 
 [2026-05-25] Base histórica: Excel com 1.767 episódios de 20 programas (2006–dez/2024), fornecido pelo usuário.
   Arquivo: `Arquivos Excel/Análise Feed NerdCast.xlsx`
@@ -123,12 +131,13 @@ FIX: o frontend busca `content.rendered` sob demanda ao abrir "Ver descricao com
 
 ## 🧠 CHAIN OF THOUGHT
 
-[2026-05-25] CONTEXTO: Decidindo estratégia de dados (API oficial vs RSS vs scraper).
-PENSAMENTO: Jovem Nerd não tem API pública documentada.
-PENSAMENTO: O site expõe feeds RSS — caminho mais limpo e respeitoso.
-PENSAMENTO: Feeds RSS limitados a ~100 eps por programa — insuficiente para histórico completo.
-PENSAMENTO: Solução: Excel como base histórica (2006–2024) + RSS para atualização incremental + scraper pontual para gaps.
-RESULTADO: Estratégia híbrida. Scripts separados por responsabilidade.
+[2026-05-25] CONTEXTO: Estratégia de dados.
+RESUMO: RSS foi avaliado e descartado como fonte principal por limite de histórico. A API custom do Jovem Nerd cobre o acervo com schema mais próximo do frontend.
+RESULTADO: `fetch_api.py` é o fluxo atual para dados completos; `convert_xlsx.py` permanece como ferramenta legada para os arquivos Excel locais.
+
+[2026-05-25] CONTEXTO: Alinhamento Felixo-Standards.
+RESUMO: O audit apontou documentação desatualizada, arquivos Excel versionados, componentes grandes e baixa cobertura de testes.
+RESULTADO: Documentação realinhada, Excel removido do índice do Git, frontend modularizado e regras críticas cobertas por Vitest.
 
 ---
 
