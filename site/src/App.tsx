@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { FilterBar } from './components/FilterBar'
 import { EpisodeCard } from './components/EpisodeCard'
 import { useChecklist } from './hooks/useChecklist'
+import { useEpisodeComments } from './hooks/useEpisodeComments'
 import { useEpisodeData } from './hooks/useEpisodeData'
 import { useEpisodeFilters } from './hooks/useEpisodeFilters'
 import { useLikes } from './hooks/useLikes'
@@ -14,6 +15,7 @@ export default function App() {
 
   const { episodes, programs, themes, loading, error } = useEpisodeData()
   const { toggle, isWatched, count: watchedCount } = useChecklist()
+  const { comments, setComment } = useEpisodeComments()
   const { toggle: toggleLike, isLiked, count: likedCount } = useLikes()
   const { playlists, createPlaylist, deletePlaylist, toggleEpisodeInPlaylist } = usePlaylists()
 
@@ -143,8 +145,10 @@ export default function App() {
                 episode={ep}
                 watched={isWatched(ep.id)}
                 liked={isLiked(ep.id)}
+                comment={comments[ep.id] ?? ''}
                 onToggle={toggle}
                 onToggleLike={toggleLike}
+                onUpdateComment={setComment}
                 activePlaylistName={selectedPlaylist?.name ?? ''}
                 isInActivePlaylist={selectedPlaylistEpisodeIds.has(ep.id)}
                 onTogglePlaylist={handleToggleEpisodeInPlaylist}

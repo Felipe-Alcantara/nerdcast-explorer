@@ -1,5 +1,6 @@
 import type { Episode } from '../types'
 import { cx } from '../utils/cx'
+import { EpisodeComments } from './EpisodeComments'
 import { EpisodeDescription } from './EpisodeDescription'
 import { EpisodeGuests } from './EpisodeGuests'
 import { EpisodeMetadata } from './EpisodeMetadata'
@@ -11,8 +12,10 @@ interface Props {
   episode: Episode
   watched: boolean
   liked: boolean
+  comment: string
   onToggle: (id: string) => void
   onToggleLike: (id: string) => void
+  onUpdateComment: (episodeId: string, comment: string) => void
   activePlaylistName: string
   isInActivePlaylist: boolean
   onTogglePlaylist: (id: string) => void
@@ -22,8 +25,10 @@ export function EpisodeCard({
   episode,
   watched,
   liked,
+  comment,
   onToggle,
   onToggleLike,
+  onUpdateComment,
   activePlaylistName,
   isInActivePlaylist,
   onTogglePlaylist,
@@ -82,6 +87,11 @@ export function EpisodeCard({
           episodeId={episode.id}
           slug={episode.slug}
           descriptionHtml={episode.description}
+        />
+        <EpisodeComments
+          episodeId={episode.id}
+          comment={comment}
+          onUpdateComment={onUpdateComment}
         />
       </div>
 
