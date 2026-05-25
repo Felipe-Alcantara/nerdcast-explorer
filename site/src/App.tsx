@@ -1,23 +1,48 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { FilterBar } from './components/FilterBar'
 import { EpisodeCard } from './components/EpisodeCard'
+import { PlaylistConflictDialog } from './components/PlaylistConflictDialog'
+import { PlaylistShareDialog } from './components/PlaylistShareDialog'
 import { useChecklist } from './hooks/useChecklist'
 import { useEpisodeComments } from './hooks/useEpisodeComments'
 import { useEpisodeData } from './hooks/useEpisodeData'
 import { useEpisodeFilters } from './hooks/useEpisodeFilters'
 import { useLikes } from './hooks/useLikes'
-import { usePlaylists } from './hooks/usePlaylists'
+import {
+  usePlaylists,
+  type ImportPlanItem,
+  type ImportResult,
+} from './hooks/usePlaylists'
+import {
+  clearShareFromLocation,
+  readShareFromLocation,
+  type ParsedShare,
+} from './utils/playlistShare'
 
 const PAGE_SIZE = 100
 
 export default function App() {
   const [selectedPlaylistId, setSelectedPlaylistId] = useState('')
+  const [initialShareFromUrl] = useState<ParsedShare | null>(() => readShareFromLocation())
+  const [shareDialogOpen, setShareDialogOpen] = useState(() => initialShareFromUrl !== null)
+  const [shareDialogMode, setShareDialogMode] = useState<'export' | 'import'>(
+    () => (initialShareFromUrl ? 'import' : 'export'),
+  )
+  const [pendingImport, setPendingImport] = useState<ParsedShare | null>(() => initialShareFromUrl)
+  const [importSummary, setImportSummary] = useState<ImportResult | null>(null)
 
   const { episodes, programs, themes, loading, error } = useEpisodeData()
   const { toggle, isWatched, count: watchedCount } = useChecklist()
   const { comments, setComment } = useEpisodeComments()
   const { toggle: toggleLike, isLiked, count: likedCount } = useLikes()
-  const { playlists, createPlaylist, deletePlaylist, toggleEpisodeInPlaylist } = usePlaylists()
+  const {
+    playlists,
+    createPlaylist,
+    deletePlaylist,
+    toggleEpisodeInPlaylist,
+    importPlaylists,
+    findPlaylistByName,
+  } = usePlaylists()
 
   const selectedPlaylist = useMemo(
     () => playlists.find(playlist => playlist.id === selectedPlaylistId) ?? null,
@@ -88,6 +113,35 @@ export default function App() {
     }
   }, [selectedPlaylistId, toggleEpisodeInPlaylist])
 
+  const handleOpenShare = useCallback(() => {
+    setShareDialogMode('export')
+    setPendingImport(null)
+    setImportSummary(null)
+    setShareDialogOpen(true)
+  }, [])
+
+  const handleCloseShare = useCallback(() => {
+    setShareDialogOpen(false)
+    setPendingImport(null)
+  }, [])
+
+  const handleImportParsed = useCallback((parsed: ParsedShare) => {
+    setPendingImport(parsed)
+  }, [])
+
+  const handleConfirmImport = useCallback((plan: ImportPlanItem[]) => {
+    const result = importPlaylists(plan)
+    setImportSummary(result)
+    setPendingImport(null)
+    setShareDialogOpen(false)
+  }, [importPlaylists])
+
+  useEffect(() => {
+    if (initialShareFromUrl) {
+      clearShareFromLocation()
+    }
+  }, [initialShareFromUrl])
+
   return (
     <div className="min-h-screen bg-[#0f0f13] text-slate-200">
       <header className="border-b border-white/5 px-4 py-5">
@@ -118,6 +172,7 @@ export default function App() {
         onCreatePlaylist={handleCreatePlaylist}
         onDeletePlaylist={handleDeletePlaylist}
         onTogglePlaylistOnly={episodeFilters.handleTogglePlaylistOnly}
+        onOpenPlaylistShare={handleOpenShare}
         programs={programs} themes={themes} guests={episodeFilters.guests} playlists={playlists} years={episodeFilters.years}
         total={episodes.length} filtered={episodeFilters.filtered.length}
         watchedCount={watchedCount}
@@ -167,6 +222,51 @@ export default function App() {
           </>
         )}
       </main>
+
+      {shareDialogOpen && !pendingImport && (
+        <PlaylistShareDialog
+          playlists={playlists}
+          initialMode={shareDialogMode}
+          onClose={handleCloseShare}
+          onImportParsed={handleImportParsed}
+        />
+      )}
+
+      {pendingImport && (
+        <PlaylistConflictDialog
+          incoming={pendingImport.playlists}
+          existingByName={findPlaylistByName}
+          onCancel={handleCloseShare}
+          onConfirm={handleConfirmImport}
+        />
+      )}
+
+      {importSummary && (
+        <ImportToast result={importSummary} onClose={() => setImportSummary(null)} />
+      )}
+    </div>
+  )
+}
+
+function ImportToast({ result, onClose }: { result: ImportResult; onClose: () => void }) {
+  useEffect(() => {
+    const timeout = window.setTimeout(onClose, 4500)
+    return () => window.clearTimeout(timeout)
+  }, [onClose])
+
+  const parts = [
+    result.added > 0 && `${result.added} adicionada(s)`,
+    result.merged > 0 && `${result.merged} mesclada(s)`,
+    result.replaced > 0 && `${result.replaced} substituída(s)`,
+    result.skipped > 0 && `${result.skipped} ignorada(s)`,
+  ].filter(Boolean) as string[]
+
+  return (
+    <div
+      role="status"
+      className="pointer-events-auto fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-4 py-2 text-xs text-emerald-200 shadow-lg"
+    >
+      Playlists importadas — {parts.join(' · ') || 'nenhuma alteração'}
     </div>
   )
 }
