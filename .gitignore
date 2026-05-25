@@ -1,0 +1,40 @@
+# Arquivos Excel originais (converter para JSON antes de commitar)
+Arquivos Excel/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Node / frontend
+node_modules/
+site/dist/
+site/.next/
+site/out/
+.next/
+
+# Ambiente local
+.env
+.env.local
+.env.*.local
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+/felixo-standards
