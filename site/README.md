@@ -49,6 +49,8 @@ python scripts/fetch_api.py
 Copy-Item data/*.json site/public/
 ```
 
+O build usa caminhos relativos (`base: './'`) para funcionar tanto na raiz de um domínio quanto em subpastas como GitHub Pages.
+
 ## Qualidade
 
 Antes de entregar alterações no frontend, rode:

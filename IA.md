@@ -60,6 +60,7 @@ Dependências Python a instalar:
 [2026-05-25] `App.tsx` atua como orquestrador; carregamento de dados e filtros ficam em hooks (`useEpisodeData`, `useEpisodeFilters`).
 [2026-05-25] Componentes grandes foram divididos por responsabilidade: cards, descrição, metadados, ações rápidas, filtros, stats e playlists.
 [2026-05-25] Regras puras de filtro, formatação, sanitização e normalização de playlists ficam em `utils/` ou hooks exportáveis com testes dedicados.
+[2026-05-25] Build Vite usa `base: './'` e fetch de JSONs via `import.meta.env.BASE_URL` para funcionar em subpastas como GitHub Pages.
 
 ---
 
