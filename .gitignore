@@ -1,6 +1,9 @@
 # Arquivos Excel originais (converter para JSON antes de commitar)
 Arquivos Excel/
 
+# Capturas HTML locais usadas apenas em investigação
+data/*.html
+
 # Python
 __pycache__/
 *.py[cod]
