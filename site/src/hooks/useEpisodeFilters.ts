@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
-import type { Episode, GuestFilterOption, SortOrder } from '../types'
+import type { Episode, SortOrder } from '../types'
+import { filterEpisodes, getEpisodeYears, getGuestFilterOptions } from '../utils/episode-filters'
 
 interface UseEpisodeFiltersArgs {
   episodes: Episode[]
@@ -32,68 +33,26 @@ export function useEpisodeFilters({
 
   const resetPage = useCallback(() => setPage(1), [])
 
-  const years = useMemo(() => {
-    const set = new Set(episodes.map(e => e.year).filter(Boolean) as number[])
-    return Array.from(set).sort((a, b) => b - a)
-  }, [episodes])
-
-  const guests = useMemo<GuestFilterOption[]>(() => {
-    const index = new Map<string, GuestFilterOption>()
-
-    for (const episode of episodes) {
-      for (const guest of episode.guests) {
-        const name = guest.name.trim()
-        const value = name.toLocaleLowerCase('pt-BR')
-
-        if (!name || !value) {
-          continue
-        }
-
-        const option = index.get(value)
-
-        if (option) {
-          option.count += 1
-        } else {
-          index.set(value, { name, value, count: 1 })
-        }
-      }
-    }
-
-    return Array.from(index.values()).sort((a, b) =>
-      a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' })
-    )
-  }, [episodes])
+  const years = useMemo(() => getEpisodeYears(episodes), [episodes])
+  const guests = useMemo(() => getGuestFilterOptions(episodes), [episodes])
 
   const filtered = useMemo(() => {
-    let list = episodes
-
-    if (playlistOnly && hasSelectedPlaylist) {
-      list = list.filter(e => playlistEpisodeIds.has(e.id))
-    }
-    if (selectedProgram) list = list.filter(e => e.program.slug === selectedProgram)
-    if (selectedTheme) list = list.filter(e => e.theme === selectedTheme)
-    if (selectedGuest) {
-      list = list.filter(e =>
-        e.guests.some(g => g.name.trim().toLocaleLowerCase('pt-BR') === selectedGuest)
-      )
-    }
-    if (yearFrom) list = list.filter(e => e.year !== null && e.year >= parseInt(yearFrom))
-    if (yearTo) list = list.filter(e => e.year !== null && e.year <= parseInt(yearTo))
-    if (search.trim()) {
-      const q = search.trim().toLowerCase()
-      list = list.filter(e =>
-        e.title.toLowerCase().includes(q) ||
-        e.guests.some(g => g.name.toLowerCase().includes(q))
-      )
-    }
-    if (onlyUnwatched) list = list.filter(e => !isWatched(e.id))
-    if (onlyLiked) list = list.filter(e => isLiked(e.id))
-
-    return [...list].sort((a, b) =>
-      sortOrder === 'desc'
-        ? a.date < b.date ? 1 : -1
-        : a.date > b.date ? 1 : -1
-    )
+    return filterEpisodes(episodes, {
+      playlistOnly,
+      hasSelectedPlaylist,
+      playlistEpisodeIds,
+      selectedProgram,
+      selectedTheme,
+      selectedGuest,
+      yearFrom,
+      yearTo,
+      search,
+      onlyUnwatched,
+      onlyLiked,
+      isWatched,
+      isLiked,
+      sortOrder,
+    })
   }, [
     episodes,
     playlistOnly,
