@@ -37,11 +37,21 @@ interface Props {
   episode: Episode
   watched: boolean
   onToggle: (id: string) => void
+  activePlaylistName: string
+  isInActivePlaylist: boolean
+  onTogglePlaylist: (id: string) => void
 }
 
 type DescriptionStatus = 'idle' | 'loading' | 'loaded' | 'error'
 
-export function EpisodeCard({ episode, watched, onToggle }: Props) {
+export function EpisodeCard({
+  episode,
+  watched,
+  onToggle,
+  activePlaylistName,
+  isInActivePlaylist,
+  onTogglePlaylist,
+}: Props) {
   const [expanded, setExpanded] = useState(false)
   const [fullDescription, setFullDescription] = useState('')
   const [descriptionStatus, setDescriptionStatus] = useState<DescriptionStatus>('idle')
@@ -235,6 +245,20 @@ export function EpisodeCard({ episode, watched, onToggle }: Props) {
       <div className="flex flex-col items-end gap-1 shrink-0 text-xs text-slate-500">
         <span>{formatDate(episode.date)}</span>
         {duration && <span>{duration}</span>}
+        {activePlaylistName && (
+          <button
+            type="button"
+            onClick={() => onTogglePlaylist(episode.id)}
+            title={isInActivePlaylist ? `Remover de ${activePlaylistName}` : `Adicionar a ${activePlaylistName}`}
+            className={`mt-1 max-w-24 rounded border px-2 py-1 text-[11px] font-medium transition cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400 ${
+              isInActivePlaylist
+                ? 'border-violet-500/50 bg-violet-500/10 text-violet-300 hover:bg-violet-500/15'
+                : 'border-white/10 bg-white/5 text-slate-400 hover:bg-white/10 hover:text-slate-200'
+            }`}
+          >
+            {isInActivePlaylist ? 'Na playlist' : '+ Playlist'}
+          </button>
+        )}
       </div>
     </div>
   )

@@ -24,6 +24,12 @@ export interface GuestFilterOption {
   count: number
 }
 
+export interface Playlist {
+  id: string
+  name: string
+  episodeIds: string[]
+}
+
 export interface Episode {
   id: string
   wp_id: number

@@ -1,4 +1,5 @@
-import type { GuestFilterOption, Program, Theme } from '../types'
+import type { GuestFilterOption, Playlist, Program, Theme } from '../types'
+import { PlaylistControls } from './PlaylistControls'
 
 const SELECT_CLS = 'bg-[#1c1c28] border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-300 outline-none focus:border-violet-500/50 transition cursor-pointer'
 const BTN_CLS = 'bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/10 transition whitespace-nowrap cursor-pointer'
@@ -20,9 +21,16 @@ interface Props {
   onSort: (v: 'asc' | 'desc') => void
   onlyUnwatched: boolean
   onToggleUnwatched: () => void
+  selectedPlaylistId: string
+  playlistOnly: boolean
+  onPlaylist: (id: string) => void
+  onCreatePlaylist: (name: string) => boolean
+  onDeletePlaylist: (id: string) => void
+  onTogglePlaylistOnly: () => void
   programs: Program[]
   themes: Theme[]
   guests: GuestFilterOption[]
+  playlists: Playlist[]
   years: number[]
   total: number
   filtered: number
@@ -38,7 +46,9 @@ export function FilterBar({
   yearTo, onYearTo,
   sortOrder, onSort,
   onlyUnwatched, onToggleUnwatched,
-  programs, themes, guests, years,
+  selectedPlaylistId, playlistOnly,
+  onPlaylist, onCreatePlaylist, onDeletePlaylist, onTogglePlaylistOnly,
+  programs, themes, guests, playlists, years,
   total, filtered,
   watchedCount,
 }: Props) {
@@ -88,7 +98,18 @@ export function FilterBar({
           </select>
         </div>
 
-        {/* Linha 3: intervalo de anos + checklist */}
+        {/* Linha 3: playlists */}
+        <PlaylistControls
+          playlists={playlists}
+          selectedPlaylistId={selectedPlaylistId}
+          playlistOnly={playlistOnly}
+          onPlaylist={onPlaylist}
+          onCreatePlaylist={onCreatePlaylist}
+          onDeletePlaylist={onDeletePlaylist}
+          onTogglePlaylistOnly={onTogglePlaylistOnly}
+        />
+
+        {/* Linha 4: intervalo de anos + checklist */}
         <div className="flex flex-wrap gap-2 items-center">
           <span className="text-xs text-slate-500 shrink-0">Período:</span>
           <select value={yearFrom} onChange={e => onYearFrom(e.target.value)} className={SELECT_CLS}>
@@ -111,7 +132,7 @@ export function FilterBar({
           </button>
         </div>
 
-        {/* Linha 4: contadores */}
+        {/* Linha 5: contadores */}
         <div className="flex items-center gap-4">
           <p className="text-xs text-slate-500">
             {filtered === total
