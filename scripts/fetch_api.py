@@ -148,11 +148,21 @@ def simplify_episode(raw: dict) -> dict:
 
     guests = parse_episode_guests(raw.get("guests"))
 
+    # raw["url"] aponta para admin.jovemnerd.com.br (CMS, pagina em branco).
+    # A URL publica segue o padrao jovemnerd.com.br/podcasts/{program}/{slug}.
+    slug = raw.get("slug", "")
+    program_slug = raw.get("product", "")
+    public_url = (
+        f"https://jovemnerd.com.br/podcasts/{program_slug}/{slug}/"
+        if slug and program_slug
+        else raw.get("url", "")
+    )
+
     return {
         "id": f"ep-{raw['id']}",
         "wp_id": raw.get("id"),
-        "slug": raw.get("slug", ""),
-        "url": raw.get("url", ""),
+        "slug": slug,
+        "url": public_url,
         "title": clean_text(raw.get("title")),
         "description": clean_text(raw.get("description")),
         "date": date_only,
