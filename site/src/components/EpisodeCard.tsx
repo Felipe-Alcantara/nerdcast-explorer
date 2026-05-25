@@ -16,6 +16,19 @@ function formatDuration(seconds: number | null): string {
   return h > 0 ? `${h}h${m.toString().padStart(2, '0')}` : `${m}min`
 }
 
+function stripHtml(html: string): string {
+  return html
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 function thumbUrl(image: string): string {
   if (!image) return ''
   // Já tem dimensão no nome do arquivo? Usa direto.
@@ -33,6 +46,7 @@ interface Props {
 export function EpisodeCard({ episode, watched, onToggle }: Props) {
   const thumb = thumbUrl(episode.image)
   const duration = formatDuration(episode.duration_seconds)
+  const description = episode.description ? stripHtml(episode.description) : ''
 
   return (
     <div className={`flex items-start gap-3 px-4 py-3 border-b border-white/5 hover:bg-white/3 transition group ${watched ? 'opacity-40' : ''}`}>
@@ -115,6 +129,15 @@ export function EpisodeCard({ episode, watched, onToggle }: Props) {
         {episode.guests.length > 0 && (
           <p className="text-xs text-slate-500 truncate">
             com {episode.guests.map(g => g.name).join(', ')}
+          </p>
+        )}
+
+        {description && (
+          <p
+            className="text-xs text-slate-400 line-clamp-2"
+            title={description}
+          >
+            {description}
           </p>
         )}
       </div>
