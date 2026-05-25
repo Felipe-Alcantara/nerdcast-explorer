@@ -24,6 +24,7 @@ Deploy alvo: GitHub Pages ou Vercel (site estático, zero custo).
 [2026-05-25] ✅ Frontend — lista completa com filtros e ordenação
 [2026-05-25] ✅ Frontend — checklist pessoal via localStorage
 [2026-05-25] ✅ Frontend — likes e playlists via localStorage
+[2026-05-25] ✅ Frontend — comentários locais por episódio via localStorage
 [2026-05-25] ✅ Qualidade — frontend modularizado em hooks, componentes focados e utilitários testáveis
 [2026-05-25] ✅ Qualidade — Vitest cobrindo sanitização, playlists, formatação e filtros críticos
 [2026-05-25] ⬜ Frontend — stats e exploração
@@ -57,6 +58,7 @@ Dependências Python a instalar:
 [2026-05-25] Filtro por convidado derivado de `episodes.json` — evita novo arquivo de índice e mantém contagem sincronizada com os episódios carregados.
 [2026-05-25] Playlists pessoais no localStorage (`nerdcast-playlists`) — sem login/backend, alinhado ao checklist local e suficiente para a v1.
 [2026-05-25] Likes de episódio no localStorage (`nerdcast-liked`) — estado independente de ouvido, com filtro dedicado para recuperar favoritos.
+[2026-05-25] Comentários por episódio no localStorage (`nerdcast-episode-comments`) — anotações privadas do usuário para marcações e momentos engraçados, sem backend e sem sincronização.
 [2026-05-25] `App.tsx` atua como orquestrador; carregamento de dados e filtros ficam em hooks (`useEpisodeData`, `useEpisodeFilters`).
 [2026-05-25] Componentes grandes foram divididos por responsabilidade: cards, descrição, metadados, ações rápidas, filtros, stats e playlists.
 [2026-05-25] Regras puras de filtro, formatação, sanitização e normalização de playlists ficam em `utils/` ou hooks exportáveis com testes dedicados.
@@ -89,6 +91,7 @@ Dependências Python a instalar:
 [2026-05-25] ✅ `npm run test` — Vitest validou `cx` e helpers de storage local.
 [2026-05-25] ✅ `python -m compileall -q start.py scripts` — scripts Python compilam sem erro de sintaxe.
 [2026-05-25] ✅ `npm audit --audit-level=moderate` — nenhuma vulnerabilidade encontrada.
+[2026-05-25] ✅ Vitest cobre normalização de comentários locais por episódio.
 
 ---
 

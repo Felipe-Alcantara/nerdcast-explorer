@@ -31,7 +31,7 @@
 
 ## Sobre o Projeto
 
-O **NerdCast Explorer** é um site estático, não-oficial, feito para complementar a navegação pelo acervo público do Jovem Nerd. O objetivo é oferecer filtros, checklist pessoal, likes, playlists locais e descrição completa dos episódios sem re-hospedar áudios ou imagens.
+O **NerdCast Explorer** é um site estático, não-oficial, feito para complementar a navegação pelo acervo público do Jovem Nerd. O objetivo é oferecer filtros, checklist pessoal, likes, playlists locais, comentários por episódio e descrição completa dos episódios sem re-hospedar áudios ou imagens.
 
 Os dados principais ficam em JSON estático dentro de `data/` e `site/public/`. Estados pessoais ficam apenas no navegador via `localStorage`.
 
@@ -47,6 +47,7 @@ Os dados principais ficam em JSON estático dentro de `data/` e `site/public/`. 
 - Checklist local de episódios ouvidos.
 - Likes locais para marcar favoritos.
 - Playlists pessoais salvas no navegador.
+- Comentários locais por episódio para anotar marcações e momentos engraçados.
 - Descrição completa carregada sob demanda pelo WordPress REST do Jovem Nerd.
 - Carregamento incremental da lista com botão "Carregar mais".
 
@@ -146,7 +147,7 @@ python -m compileall -q start.py scripts
 ## Limitações
 
 - Projeto não-oficial, sem vínculo com Jovem Nerd ou Jovem Nerd S/A.
-- Checklist, likes e playlists ficam no navegador e não sincronizam entre dispositivos.
+- Checklist, likes, playlists e comentários ficam no navegador e não sincronizam entre dispositivos.
 - A descrição completa depende de chamada externa ao WordPress REST no primeiro carregamento.
 - O deploy público ainda está a definir.
 

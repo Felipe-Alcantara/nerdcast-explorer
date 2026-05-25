@@ -10,6 +10,7 @@ Frontend do NerdCast Explorer, construído com React 19, TypeScript, Tailwind CS
 - Checklist de ouvidos via `localStorage`.
 - Likes via `localStorage`.
 - Playlists pessoais via `localStorage`.
+- Comentários por episódio via `localStorage`.
 - Descrição completa sob demanda pelo WordPress REST do Jovem Nerd.
 
 ## Estrutura
