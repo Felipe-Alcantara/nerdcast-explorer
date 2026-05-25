@@ -11,13 +11,13 @@ interface Props {
 
 export function FilterSearchSort({ search, onSearch, sortOrder, onSort }: Props) {
   return (
-    <div className="flex flex-col sm:flex-row gap-2">
+    <div className="flex gap-2">
       <input
         type="text"
         value={search}
         onChange={event => onSearch(event.target.value)}
         placeholder="Buscar episódio..."
-        className={cx(INPUT_CLS, 'flex-1 px-4')}
+        className={cx(INPUT_CLS, 'min-w-0 flex-1 px-4')}
       />
       <button
         type="button"
