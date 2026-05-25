@@ -1,227 +1,170 @@
-# 🎙️ NerdCast Explorer
+# NerdCast Explorer
 
 <div align="center">
 
 ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-**Acervo não-oficial do NerdCast — explore, filtre e acompanhe todos os episódios desde 2006.**
+**Acervo não-oficial do NerdCast para explorar, filtrar, favoritar e organizar episódios.**
 
-[🎯 Sobre o Projeto](#-sobre-o-projeto) • [🚀 Features](#-features) • [📁 Estrutura](#-estrutura-do-projeto) • [🤝 Contribuir](#-contribuições)
+[Sobre](#sobre-o-projeto) • [Funcionalidades](#funcionalidades) • [Estrutura](#estrutura-do-projeto) • [Como Usar](#como-usar)
 
 </div>
 
 ---
 
-O Jovem Nerd existe desde 2006 e o NerdCast é um dos podcasts mais antigos e queridos do Brasil — com mais de 2.000 episódios espalhados por dezenas de programas diferentes. Mas o site oficial não acompanhou o crescimento do acervo: sem filtros avançados, sem ordenação flexível, sem como ver todos os episódios de uma vez. O **NerdCast Explorer** nasceu pra resolver isso.
+## Índice
 
-## 📋 Índice
-
-- [🎯 **Sobre o Projeto**](#-sobre-o-projeto) ⭐ **DESTAQUE**
-- [🚀 Features](#-features)
-- [📁 Estrutura do Projeto](#-estrutura-do-projeto)
-- [🎯 Como Usar](#-como-usar)
-- [⚠️ Limitações](#️-limitações)
-- [📝 Licença](#-licença)
-- [👤 Autor](#-autor)
-- [🤝 Contribuições](#-contribuições)
+- [Sobre o Projeto](#sobre-o-projeto)
+- [Funcionalidades](#funcionalidades)
+- [Estrutura do Projeto](#estrutura-do-projeto)
+- [Como Usar](#como-usar)
+- [Dados e Integrações](#dados-e-integrações)
+- [Limitações](#limitações)
+- [Licença](#licença)
+- [Autor](#autor)
 
 ---
 
-## 🎯 Sobre o Projeto ⭐
+## Sobre o Projeto
 
-Quem chega hoje no site do Jovem Nerd pela primeira vez se depara com uma experiência que não acompanhou o crescimento do acervo. Não há filtros avançados, não é possível ordenar do jeito que você quer, e muito menos acompanhar o próprio progresso de escuta. Para o nerd completista que quer zerar o backlog, isso é frustrante.
+O **NerdCast Explorer** é um site estático, não-oficial, feito para complementar a navegação pelo acervo público do Jovem Nerd. O objetivo é oferecer filtros, checklist pessoal, likes, playlists locais e descrição completa dos episódios sem re-hospedar áudios ou imagens.
 
-O **NerdCast Explorer** é um acervo não-oficial, construído por fãs para fãs, com o único objetivo de tornar esse universo de conteúdo mais navegável — sem substituir o site do Jovem Nerd, mas complementando o que ele não oferece.
-
-### ✨ **O que você encontra aqui:**
-
-- 🎙️ **Todos os episódios desde abril de 2006** — NerdCast, Lá do Bunker, NerdTech, e mais
-- 🔍 **Filtros e ordenação livres** — por programa, ano, tema, número do ep
-- ✅ **Checklist pessoal** — marque o que já ouviu, sem cadastro, salvo no browser
-- 📊 **Stats e exploração** — gráficos, rankings, linha do tempo
-- 🗺️ **Guia para iniciantes** — episódios clássicos, por onde começar
-- 🔄 **Dados atualizados automaticamente** — via feeds RSS com GitHub Actions
+Os dados principais ficam em JSON estático dentro de `data/` e `site/public/`. Estados pessoais ficam apenas no navegador via `localStorage`.
 
 ---
 
-## 🚀 Features
+## Funcionalidades
 
-### 🔍 Lista Completa (`site/`)
+### Site React (`site/`)
 
-**Lista de todos os episódios com:**
-- Busca por título
-- Filtro por programa (NerdCast, Lá do Bunker, NerdTech…)
-- Filtro por ano / intervalo de datas
-- Ordenação: mais recente, mais antigo, número do ep
-- Modo compacto ou cards
-- Sem paginação forçada — carrega tudo de uma vez
+- Busca por título e convidado.
+- Filtros por programa, tema, convidado, período, não ouvidos, curtidos e playlist.
+- Ordenação por data, do mais recente ou mais antigo.
+- Checklist local de episódios ouvidos.
+- Likes locais para marcar favoritos.
+- Playlists pessoais salvas no navegador.
+- Descrição completa carregada sob demanda pelo WordPress REST do Jovem Nerd.
+- Carregamento incremental da lista com botão "Carregar mais".
 
-📖 [Ver documentação do site](site/README.md)
+### Scripts de Dados (`scripts/`)
 
----
-
-### ✅ Checklist Pessoal (`site/`)
-
-**Acompanhe seu progresso:**
-- Marcar eps como ouvidos (salvo em `localStorage`, sem cadastro)
-- Progresso por programa: "você ouviu 312 de 962 NerdCasts"
-- Filtro "só os que faltam"
-- Exportar progresso em JSON ou CSV
-
----
-
-### 📊 Stats & Exploração (`site/`)
-
-**Visualize o acervo:**
-- Episódios por ano (gráfico)
-- Linha do tempo interativa
-- Ranking de temas mais frequentes
-
----
-
-### 🗺️ Guia para Iniciantes (`site/`)
-
-**Para quem está chegando agora:**
-- Curadoria de episódios clássicos marcados com ⭐
-- Agrupamento por tema (RPG, Star Wars, História, Tecnologia…)
-- Sugestão de ordem para quem quer zerar o backlog
-
----
-
-### 🗄️ Pipeline de Dados (`scripts/`)
+**`fetch_api.py`**
+- Baixa episódios, convidados, temas e programas via API pública do Jovem Nerd.
+- Normaliza o schema usado pelo frontend.
+- Gera `episodes.json`, `guests.json`, `themes.json` e `programs.json` em `data/`.
 
 **`convert_xlsx.py`**
-- Converte o Excel histórico (2006–2024) para `episodes.json`
-- Normaliza campos, limpa dados e deduplica entradas
+- Converte o Excel histórico local para `data/episodes.json`.
+- É mantido como ferramenta auxiliar para quem tem os arquivos originais.
+- Os Excel originais ficam ignorados pelo Git e não devem ser versionados.
 
-**`update_rss.py`**
-- Consome os feeds RSS do Jovem Nerd
-- Faz merge com o JSON existente sem duplicar episódios
-- Executado semanalmente via GitHub Actions
-
-**`scrape_all.py`**
-- Scraper pontual para preencher gaps históricos
-- Usado apenas para varredura inicial ou períodos sem feed
+**`start.py`**
+- Verifica Node.js.
+- Instala `openpyxl` se necessário.
+- Gera dados quando `data/episodes.json` ainda não existe.
+- Instala dependências npm do site e inicia o Vite.
 
 ---
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
-```
+```text
 nerdcast-explorer/
-│
-├── 📁 data/                   # Fonte de verdade — gerada, não editada manualmente
-│   └── episodes.json          # Todos os episódios desde 2006
-│
-├── 📁 scripts/                # Scripts Python de coleta e atualização
-│   ├── convert_xlsx.py        # Converte o Excel histórico para JSON
-│   ├── update_rss.py          # Atualiza via feeds RSS (rodado pelo CI)
-│   └── scrape_all.py          # Scraper pontual para gaps históricos
-│
-├── 📁 site/                   # Frontend React + TypeScript + Tailwind
-│   ├── 📁 src/
-│   │   ├── 📁 components/     # EpisodeList, Filters, Checklist, Stats
-│   │   ├── 📁 pages/          # Páginas da aplicação
-│   │   └── 📁 data/           # Hook de acesso ao episodes.json
-│   └── README.md
-│
-├── 📁 .github/
-│   └── 📁 workflows/
-│       └── update-data.yml    # GitHub Action semanal de atualização
-│
-├── IA.md                      # Contexto técnico do projeto para IA
-├── README.md                  # Este arquivo
-└── LICENSE
+├── data/                  # JSONs gerados para consumo do site
+├── docs/                  # Documentação técnica de integrações
+├── scripts/               # Scripts Python de coleta/conversão
+├── site/                  # Frontend React + TypeScript + Tailwind
+│   ├── public/            # JSONs e assets servidos pelo Vite
+│   └── src/
+│       ├── components/    # Componentes de UI da aplicação
+│       ├── hooks/         # Estado local persistido
+│       └── utils/         # Integrações e sanitização
+├── IA.md                  # Contexto operacional para IA
+├── README.md              # Este arquivo
+└── start.py               # Setup e dev server local
 ```
 
 ---
 
-## 🎯 Como Usar
+## Como Usar
 
-### Para acessar o site
-
-> Em breve — o site será hospedado via GitHub Pages ou Vercel.
-
-### Para rodar localmente
-
-#### Pré-requisitos
-
-- Python 3.11+
-- Node.js 20+
-
-#### Instalação
+### Opção rápida
 
 ```bash
-# Clone o repositório
-git clone https://github.com/Felipe-Alcantara/nerdcast-explorer.git
-
-# Entre na pasta
-cd nerdcast-explorer
+# Instala dependências necessárias e inicia o site
+python start.py
 ```
 
-#### Gerando os dados
+### Rodando manualmente
 
 ```bash
-# Instale as dependências Python
+# Instale dependências Python para conversão do Excel, se necessário
 pip install -r scripts/requirements.txt
 
-# Converta o Excel histórico para JSON
-python scripts/convert_xlsx.py
+# Atualize os JSONs pela API pública do Jovem Nerd
+python scripts/fetch_api.py
 
-# Atualize com os feeds RSS mais recentes
-python scripts/update_rss.py
-```
+# Copie os dados atualizados para o site, se necessário
+Copy-Item data/*.json site/public/
 
-#### Rodando o site
-
-```bash
-# Entre na pasta do site
+# Instale e rode o frontend
 cd site
-
-# Instale as dependências
 npm install
-
-# Rode em modo desenvolvimento
 npm run dev
 ```
 
----
+### Validação
 
-## ⚠️ Limitações
+```bash
+cd site
+npm run lint
+npm run build
+npm audit --audit-level=moderate
+```
 
-- **Projeto não-oficial**: não tem vínculo com o Jovem Nerd ou a Jovem Nerd S/A
-- **Dados históricos**: o Excel base cobre até dezembro de 2024 — gaps podem existir
-- **RSS limitado**: feeds RSS do site oficial retornam apenas os últimos ~100 eps por programa
-- **Checklist local**: o progresso fica salvo no browser — não sincroniza entre dispositivos
-
----
-
-## 📝 Licença
-
-Este projeto está sob a licença MIT — veja o arquivo `LICENSE`.
+```bash
+python -m compileall -q start.py scripts
+```
 
 ---
 
-## 👤 Autor
+## Dados e Integrações
+
+- API custom do Jovem Nerd: `https://api.jovemnerd.com.br/wp-json/jovemnerd/v1`
+- WordPress REST para descrição completa: `https://admin.jovemnerd.com.br/wp-json/wp/v2/podcast/?slug={slug}`
+- Áudios e imagens continuam hospedados nos domínios oficiais do Jovem Nerd.
+- Documentação não-oficial: [docs/JOVEM_NERD_API.md](docs/JOVEM_NERD_API.md)
+
+---
+
+## Limitações
+
+- Projeto não-oficial, sem vínculo com Jovem Nerd ou Jovem Nerd S/A.
+- Checklist, likes e playlists ficam no navegador e não sincronizam entre dispositivos.
+- A descrição completa depende de chamada externa ao WordPress REST no primeiro carregamento.
+- O deploy público ainda está a definir.
+
+---
+
+## Licença
+
+Este projeto está sob a licença MIT. Veja [LICENSE](LICENSE).
+
+---
+
+## Autor
 
 **Felipe Martin**
+
 - GitHub: [@Felipe-Alcantara](https://github.com/Felipe-Alcantara)
 - Repositório: [nerdcast-explorer](https://github.com/Felipe-Alcantara/nerdcast-explorer)
 
 ---
 
-## 🤝 Contribuições
+## Contribuições
 
-Contribuições são bem-vindas! Sinta-se à vontade para:
-- Reportar episódios faltando ou com dados errados
-- Sugerir novas funcionalidades
-- Melhorar scripts de coleta
-- Contribuir com o frontend
-
----
-
-⭐ Se este projeto foi útil, considere dar uma estrela no GitHub!
+Contribuições são bem-vindas para corrigir dados, melhorar filtros, evoluir a interface ou reforçar a cobertura de testes.

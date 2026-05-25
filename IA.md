@@ -10,7 +10,7 @@
 
 [2026-05-25] Acervo não-oficial do NerdCast para complementar o site do Jovem Nerd.
 Público: ouvintes do NerdCast, do completista ao iniciante.
-Objetivo central: listar todos os episódios com filtros, checklist pessoal e stats — sem substituir o site oficial.
+Objetivo central: listar episódios com filtros, checklist pessoal, likes, playlists locais e descrição completa — sem substituir o site oficial.
 Deploy alvo: GitHub Pages ou Vercel (site estático, zero custo).
 
 ---
@@ -19,12 +19,11 @@ Deploy alvo: GitHub Pages ou Vercel (site estático, zero custo).
 
 [2026-05-25] ✅ Identidade do projeto definida — nome, descrição, propósito
 [2026-05-25] ✅ Estrutura inicial do repositório criada — README, IA.md, pastas
-[2026-05-25] ⬜ Converter Excel histórico (2006–2024) para `data/episodes.json`
-[2026-05-25] ⬜ Script `update_rss.py` — consumir feeds RSS e fazer merge com o JSON
-[2026-05-25] ⬜ Script `scrape_all.py` — scraper pontual para gaps históricos
-[2026-05-25] ⬜ GitHub Action semanal de atualização de dados
-[2026-05-25] ⬜ Frontend — lista completa com filtros e ordenação
-[2026-05-25] ⬜ Frontend — checklist pessoal via localStorage
+[2026-05-25] ✅ Script `fetch_api.py` — consumir API pública do Jovem Nerd e gerar JSONs
+[2026-05-25] ✅ Script `convert_xlsx.py` — converter Excel histórico local para `data/episodes.json`
+[2026-05-25] ✅ Frontend — lista completa com filtros e ordenação
+[2026-05-25] ✅ Frontend — checklist pessoal via localStorage
+[2026-05-25] ✅ Frontend — likes e playlists via localStorage
 [2026-05-25] ⬜ Frontend — stats e exploração
 [2026-05-25] ⬜ Frontend — guia para iniciantes
 [2026-05-25] ⬜ Deploy do site
@@ -34,17 +33,14 @@ Deploy alvo: GitHub Pages ou Vercel (site estático, zero custo).
 ## 🛠️ STACK & DEPENDÊNCIAS
 
 [2026-05-25] Scripts de dados: Python 3.11+
-[2026-05-25] Frontend: React 18 + TypeScript + Tailwind CSS (padrão felixo-standards)
-[2026-05-25] Build/dev: Vite (padrão felixo-standards)
+[2026-05-25] Frontend: React 19 + TypeScript + Tailwind CSS 4 (padrão felixo-standards adaptado ao projeto)
+[2026-05-25] Build/dev: Vite 8 (padrão felixo-standards adaptado ao projeto)
 [2026-05-25] Dados: JSON estático gerado por Python — sem backend, sem banco
 [2026-05-25] Checklist: localStorage no browser — sem login, sem servidor
-[2026-05-25] Automação: GitHub Actions (schedule semanal)
 [2026-05-25] Hosting: GitHub Pages ou Vercel (a definir)
 
 Dependências Python a instalar:
-- `openpyxl` ou `pandas` — leitura do Excel
-- `feedparser` ou `requests` + `xml.etree` — consumo dos feeds RSS
-- `beautifulsoup4` + `requests` — scraper pontual (opcional)
+- `openpyxl` — leitura do Excel histórico local
 
 ---
 
@@ -53,8 +49,7 @@ Dependências Python a instalar:
 [2026-05-25] Site estático com JSON — sem backend nem banco. Justificativa: projeto de fã, custo zero, dados mudam pouco (semanal).
 [2026-05-25] `data/episodes.json` como fonte de verdade — gerado por scripts Python, nunca editado manualmente.
 [2026-05-25] Checklist no localStorage — sem login. Justificativa: simplicidade > persistência cross-device para v1.
-[2026-05-25] Scripts Python separados por responsabilidade: `convert_xlsx.py` (one-shot histórico), `update_rss.py` (recorrente), `scrape_all.py` (pontual).
-[2026-05-25] GitHub Actions para atualização automática — roda `update_rss.py` semanalmente e faz commit/PR automático se houver novos eps.
+[2026-05-25] Scripts Python separados por responsabilidade: `fetch_api.py` (coleta via API pública), `convert_xlsx.py` (conversão do Excel histórico local).
 [2026-05-25] Filtro por convidado derivado de `episodes.json` — evita novo arquivo de índice e mantém contagem sincronizada com os episódios carregados.
 [2026-05-25] Playlists pessoais no localStorage (`nerdcast-playlists`) — sem login/backend, alinhado ao checklist local e suficiente para a v1.
 [2026-05-25] Likes de episódio no localStorage (`nerdcast-liked`) — estado independente de ouvido, com filtro dedicado para recuperar favoritos.
@@ -80,6 +75,8 @@ Dependências Python a instalar:
 [2026-05-25] ✅ `npm run build` — TypeScript + Vite validaram hook, controles e integração das playlists.
 [2026-05-25] ✅ `npm run lint` — likes de episódio e filtro "Só curtidos" sem erro de lint.
 [2026-05-25] ✅ `npm run build` — TypeScript + Vite validaram hook e integração de likes.
+[2026-05-25] ✅ `python -m compileall -q start.py scripts` — scripts Python compilam sem erro de sintaxe.
+[2026-05-25] ✅ `npm audit --audit-level=moderate` — nenhuma vulnerabilidade encontrada.
 
 ---
 
@@ -120,6 +117,7 @@ FIX: o frontend busca `content.rendered` sob demanda ao abrir "Ver descricao com
   Não está vinculado ao git do projeto — pode ser atualizado com o script do felixo README.
 
 [2026-05-25] Os Arquivos Excel/ não devem ser commitados diretamente no repositório público — mover para .gitignore após a conversão para JSON.
+[2026-05-25] Os Excel originais foram removidos do índice do Git com `git rm --cached` e permanecem locais por `.gitignore`.
 
 ---
 
