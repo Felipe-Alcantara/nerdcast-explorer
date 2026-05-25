@@ -33,6 +33,7 @@ interface Props {
   onCreatePlaylist: (name: string) => boolean
   onDeletePlaylist: (id: string) => void
   onTogglePlaylistOnly: () => void
+  onOpenPlaylistShare: () => void
   programs: Program[]
   themes: Theme[]
   guests: GuestFilterOption[]
@@ -55,7 +56,7 @@ export function FilterBar({
   onlyUnwatched, onToggleUnwatched,
   onlyLiked, onToggleLiked,
   selectedPlaylistId, playlistOnly,
-  onPlaylist, onCreatePlaylist, onDeletePlaylist, onTogglePlaylistOnly,
+  onPlaylist, onCreatePlaylist, onDeletePlaylist, onTogglePlaylistOnly, onOpenPlaylistShare,
   programs, themes, guests, playlists, years,
   total, filtered,
   watchedCount,
@@ -131,6 +132,7 @@ export function FilterBar({
           onCreatePlaylist={onCreatePlaylist}
           onDeletePlaylist={onDeletePlaylist}
           onTogglePlaylistOnly={onTogglePlaylistOnly}
+          onOpenShare={onOpenPlaylistShare}
         />
 
         <FilterPeriodActions

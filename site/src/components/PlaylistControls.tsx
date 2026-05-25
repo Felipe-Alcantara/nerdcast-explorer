@@ -11,6 +11,7 @@ interface Props {
   onCreatePlaylist: (name: string) => boolean
   onDeletePlaylist: (id: string) => void
   onTogglePlaylistOnly: () => void
+  onOpenShare: () => void
 }
 
 export function PlaylistControls({
@@ -21,6 +22,7 @@ export function PlaylistControls({
   onCreatePlaylist,
   onDeletePlaylist,
   onTogglePlaylistOnly,
+  onOpenShare,
 }: Props) {
   const [newPlaylistName, setNewPlaylistName] = useState('')
   const selectedPlaylist = playlists.find(playlist => playlist.id === selectedPlaylistId) ?? null
@@ -84,6 +86,9 @@ export function PlaylistControls({
           className={cx(BTN_CLS, playlistOnly && 'border-violet-500/50 text-violet-300 bg-violet-500/10')}
         >
           {playlistOnly ? 'Ver todos' : 'Só playlist'}
+        </button>
+        <button type="button" onClick={onOpenShare} className={BTN_CLS}>
+          Compartilhar
         </button>
         <button
           type="button"
