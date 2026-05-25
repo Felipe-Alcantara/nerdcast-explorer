@@ -59,7 +59,7 @@ def convert():
         month = int(date_str[5:7]) if date_str else None
         episode_number = parse_episode_number(ep_num)
 
-        slug = f"{ep_type.lower().replace(' ', '-')}-{episode_number or i}"
+        slug = f"ep-{i:04d}"
 
         episodes.append({
             "id": slug,
