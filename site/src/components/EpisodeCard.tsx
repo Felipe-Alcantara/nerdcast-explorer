@@ -1,5 +1,8 @@
+import { useMemo, useState } from 'react'
 import type { Episode } from '../types'
 import { ProgramBadge } from './ProgramBadge'
+import { fetchEpisodeFullDescription } from '../utils/episode-content'
+import { sanitizeDescriptionHtml, stripHtml } from '../utils/html'
 
 const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 
@@ -22,19 +25,6 @@ function guestUrl(twitter: string): string {
   return `https://twitter.com/${twitter.replace(/^@/, '')}`
 }
 
-function stripHtml(html: string): string {
-  return html
-    .replace(/<[^>]*>/g, ' ')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/\s+/g, ' ')
-    .trim()
-}
-
 function thumbUrl(image: string): string {
   if (!image) return ''
   // Já tem dimensão no nome do arquivo? Usa direto.
@@ -49,10 +39,56 @@ interface Props {
   onToggle: (id: string) => void
 }
 
+type DescriptionStatus = 'idle' | 'loading' | 'loaded' | 'error'
+
 export function EpisodeCard({ episode, watched, onToggle }: Props) {
+  const [expanded, setExpanded] = useState(false)
+  const [fullDescription, setFullDescription] = useState('')
+  const [descriptionStatus, setDescriptionStatus] = useState<DescriptionStatus>('idle')
   const thumb = thumbUrl(episode.image)
   const duration = formatDuration(episode.duration_seconds)
   const description = episode.description ? stripHtml(episode.description) : ''
+  const hasDescription = !!episode.description?.trim()
+  const hasDescriptionDetails = hasDescription || !!episode.slug
+  const fullDescriptionText = fullDescription ? stripHtml(fullDescription) : ''
+  const expandedDescription = useMemo(() => {
+    const parts = []
+
+    if (episode.description) {
+      parts.push(episode.description)
+    }
+
+    if (fullDescription && fullDescriptionText !== description) {
+      parts.push(fullDescription)
+    }
+
+    return sanitizeDescriptionHtml(parts.join('\n'))
+  }, [description, episode.description, fullDescription, fullDescriptionText])
+
+  async function loadFullDescription() {
+    if (!episode.slug || descriptionStatus === 'loading' || descriptionStatus === 'loaded') {
+      return
+    }
+
+    setDescriptionStatus('loading')
+
+    try {
+      const content = await fetchEpisodeFullDescription(episode.slug)
+      setFullDescription(content)
+      setDescriptionStatus('loaded')
+    } catch {
+      setDescriptionStatus('error')
+    }
+  }
+
+  function toggleDescription() {
+    const nextExpanded = !expanded
+    setExpanded(nextExpanded)
+
+    if (nextExpanded) {
+      void loadFullDescription()
+    }
+  }
 
   return (
     <div className={`flex items-start gap-3 px-4 py-3 border-b border-white/5 hover:bg-white/3 transition group ${watched ? 'opacity-40' : ''}`}>
@@ -159,13 +195,39 @@ export function EpisodeCard({ episode, watched, onToggle }: Props) {
           </p>
         )}
 
-        {description && (
-          <p
-            className="text-xs text-slate-400 line-clamp-2"
-            title={description}
-          >
+        {hasDescription && !expanded && (
+          <p className="text-xs text-slate-400 line-clamp-2">
             {description}
           </p>
+        )}
+
+        {hasDescriptionDetails && (
+          <button
+            type="button"
+            onClick={toggleDescription}
+            aria-expanded={expanded}
+            aria-controls={`description-${episode.id}`}
+            className="self-start text-xs font-medium text-violet-300 hover:text-violet-200 transition cursor-pointer rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400"
+          >
+            {expanded ? 'Recolher descricao' : 'Ver descricao completa'}
+          </button>
+        )}
+
+        {expanded && (
+          <div id={`description-${episode.id}`} className="mt-1 text-xs text-slate-300 leading-relaxed">
+            {expandedDescription && (
+              <div
+                className="episode-description"
+                dangerouslySetInnerHTML={{ __html: expandedDescription }}
+              />
+            )}
+            {descriptionStatus === 'loading' && (
+              <p className="text-slate-500">Carregando descricao completa...</p>
+            )}
+            {descriptionStatus === 'error' && (
+              <p className="text-amber-300">Nao foi possivel carregar a descricao completa. Exibindo o resumo local.</p>
+            )}
+          </div>
         )}
       </div>
 

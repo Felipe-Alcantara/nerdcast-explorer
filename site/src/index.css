@@ -11,3 +11,55 @@ body {
   font-family: system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
+
+.episode-description {
+  overflow-wrap: anywhere;
+}
+
+.episode-description p,
+.episode-description div,
+.episode-description blockquote {
+  margin: 0 0 0.5rem;
+}
+
+.episode-description h2,
+.episode-description h3,
+.episode-description h4 {
+  margin: 0.85rem 0 0.35rem;
+  color: #f8fafc;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.episode-description ul,
+.episode-description ol {
+  margin: 0.5rem 0 0.75rem 1rem;
+  padding: 0;
+}
+
+.episode-description ul {
+  list-style: disc;
+}
+
+.episode-description ol {
+  list-style: decimal;
+}
+
+.episode-description li {
+  margin: 0.25rem 0;
+}
+
+.episode-description a {
+  color: #c4b5fd;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.episode-description a:hover {
+  color: #ddd6fe;
+}
+
+.episode-description strong,
+.episode-description b {
+  color: #f8fafc;
+}
