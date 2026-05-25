@@ -1,9 +1,9 @@
-FROM node:24-alpine
+FROM node:22-alpine
 
 WORKDIR /app
 
 COPY site/package*.json ./site/
-RUN cd site && npm ci
+RUN cd site && npm install --no-audit --no-fund
 
 COPY site ./site
 COPY data ./data
