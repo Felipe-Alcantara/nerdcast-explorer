@@ -56,6 +56,7 @@ Dependências Python a instalar:
 [2026-05-25] Scripts Python separados por responsabilidade: `convert_xlsx.py` (one-shot histórico), `update_rss.py` (recorrente), `scrape_all.py` (pontual).
 [2026-05-25] GitHub Actions para atualização automática — roda `update_rss.py` semanalmente e faz commit/PR automático se houver novos eps.
 [2026-05-25] Filtro por convidado derivado de `episodes.json` — evita novo arquivo de índice e mantém contagem sincronizada com os episódios carregados.
+[2026-05-25] Playlists pessoais no localStorage (`nerdcast-playlists`) — sem login/backend, alinhado ao checklist local e suficiente para a v1.
 
 ---
 
@@ -74,6 +75,8 @@ Dependências Python a instalar:
 [2026-05-25] ✅ `npm run build` — TypeScript + Vite build sem erros.
 [2026-05-25] ✅ `npm run lint` — filtro por convidado integrado sem erro de lint.
 [2026-05-25] ✅ `npm run build` — build validou tipos do novo filtro por convidado.
+[2026-05-25] ✅ `npm run lint` — criador local de playlists sem erro de lint.
+[2026-05-25] ✅ `npm run build` — TypeScript + Vite validaram hook, controles e integração das playlists.
 
 ---
 
