@@ -1,4 +1,4 @@
-const SELECT_CLS = 'bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-300 outline-none focus:border-violet-500/50 transition cursor-pointer'
+const SELECT_CLS = 'bg-[#1c1c28] border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-300 outline-none focus:border-violet-500/50 transition cursor-pointer'
 const BTN_CLS = 'bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/10 transition whitespace-nowrap cursor-pointer'
 
 interface Props {
