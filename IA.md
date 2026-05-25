@@ -53,6 +53,7 @@ Dependências Python a instalar:
 [2026-05-25] `data/episodes.json` como fonte de verdade — gerado por scripts Python, nunca editado manualmente.
 [2026-05-25] Checklist no localStorage — sem login. Justificativa: simplicidade > persistência cross-device para v1.
 [2026-05-25] Scripts Python separados por responsabilidade: `fetch_api.py` (coleta via API pública), `convert_xlsx.py` (conversão do Excel histórico local).
+[2026-05-25] `start.py` usa `fetch_api.py` como bootstrap de dados atuais quando JSONs obrigatórios faltam e sincroniza `data/*.json` para `site/public/`.
 [2026-05-25] Filtro por convidado derivado de `episodes.json` — evita novo arquivo de índice e mantém contagem sincronizada com os episódios carregados.
 [2026-05-25] Playlists pessoais no localStorage (`nerdcast-playlists`) — sem login/backend, alinhado ao checklist local e suficiente para a v1.
 [2026-05-25] Likes de episódio no localStorage (`nerdcast-liked`) — estado independente de ouvido, com filtro dedicado para recuperar favoritos.

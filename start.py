@@ -6,12 +6,17 @@ Execute: python start.py
 import subprocess
 import sys
 import os
+import json
+import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).parent
 SITE = ROOT / "site"
-DATA = ROOT / "data" / "episodes.json"
+DATA_DIR = ROOT / "data"
+PUBLIC_DIR = SITE / "public"
 PY_REQUIREMENTS = ROOT / "scripts" / "requirements.txt"
+REQUIRED_JSON = ("episodes.json", "programs.json", "themes.json")
+OPTIONAL_JSON = ("guests.json",)
 
 
 def run(cmd, cwd=None, check=True):
@@ -43,13 +48,27 @@ def install_python_deps():
 
 def generate_data():
     step("Dados dos episodios")
-    if DATA.exists():
-        import json
-        count = len(json.loads(DATA.read_text(encoding="utf-8")))
-        print(f"  episodes.json ja existe ({count} episodios)")
-    else:
-        print("  Convertendo Excel para JSON...")
-        run([sys.executable, str(ROOT / "scripts" / "convert_xlsx.py")])
+    missing = [name for name in REQUIRED_JSON if not (DATA_DIR / name).exists()]
+
+    if missing:
+        print(f"  JSONs ausentes: {', '.join(missing)}")
+        print("  Baixando dados atuais pela API publica...")
+        run([sys.executable, str(ROOT / "scripts" / "fetch_api.py")])
+
+    episodes_path = DATA_DIR / "episodes.json"
+    count = len(json.loads(episodes_path.read_text(encoding="utf-8")))
+    print(f"  episodes.json pronto ({count} episodios)")
+    sync_public_data()
+
+
+def sync_public_data():
+    PUBLIC_DIR.mkdir(exist_ok=True)
+
+    for name in (*REQUIRED_JSON, *OPTIONAL_JSON):
+        source = DATA_DIR / name
+        if source.exists():
+            shutil.copy2(source, PUBLIC_DIR / name)
+            print(f"  {name} sincronizado em site/public/")
 
 
 def install_npm_deps():

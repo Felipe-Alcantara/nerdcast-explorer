@@ -65,7 +65,8 @@ Os dados principais ficam em JSON estático dentro de `data/` e `site/public/`. 
 **`start.py`**
 - Verifica Node.js.
 - Instala `openpyxl` se necessário.
-- Gera dados quando `data/episodes.json` ainda não existe.
+- Gera dados pela API quando os JSONs obrigatórios ainda não existem.
+- Sincroniza `data/*.json` para `site/public/`.
 - Instala dependências npm do site e inicia o Vite.
 
 ---
