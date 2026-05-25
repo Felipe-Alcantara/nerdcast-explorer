@@ -209,7 +209,7 @@ export function EpisodeCard({ episode, watched, onToggle }: Props) {
             aria-controls={`description-${episode.id}`}
             className="self-start text-xs font-medium text-violet-300 hover:text-violet-200 transition cursor-pointer rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400"
           >
-            {expanded ? 'Recolher descricao' : 'Ver descricao completa'}
+            {expanded ? 'Recolher descrição' : 'Ver descrição completa'}
           </button>
         )}
 
@@ -222,10 +222,10 @@ export function EpisodeCard({ episode, watched, onToggle }: Props) {
               />
             )}
             {descriptionStatus === 'loading' && (
-              <p className="text-slate-500">Carregando descricao completa...</p>
+              <p className="text-slate-500">Carregando descrição completa...</p>
             )}
             {descriptionStatus === 'error' && (
-              <p className="text-amber-300">Nao foi possivel carregar a descricao completa. Exibindo o resumo local.</p>
+              <p className="text-amber-300">Não foi possível carregar a descrição completa. Exibindo o resumo local.</p>
             )}
           </div>
         )}
