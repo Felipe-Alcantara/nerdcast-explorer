@@ -11,6 +11,10 @@ async function fetchJson<T>(url: string): Promise<T> {
   return response.json() as Promise<T>
 }
 
+function publicDataUrl(fileName: string): string {
+  return `${import.meta.env.BASE_URL}${fileName}`
+}
+
 export function useEpisodeData() {
   const [episodes, setEpisodes] = useState<Episode[]>([])
   const [programs, setPrograms] = useState<Program[]>([])
@@ -22,9 +26,9 @@ export function useEpisodeData() {
     let active = true
 
     Promise.all([
-      fetchJson<Episode[]>('/episodes.json'),
-      fetchJson<Program[]>('/programs.json'),
-      fetchJson<Theme[]>('/themes.json'),
+      fetchJson<Episode[]>(publicDataUrl('episodes.json')),
+      fetchJson<Program[]>(publicDataUrl('programs.json')),
+      fetchJson<Theme[]>(publicDataUrl('themes.json')),
     ])
       .then(([eps, progs, thms]) => {
         if (!active) {
