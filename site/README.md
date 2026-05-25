@@ -18,7 +18,7 @@ Frontend do NerdCast Explorer, construído com React 19, TypeScript, Tailwind CS
 src/
 ├── components/      # UI da aplicação
 ├── hooks/           # Estados locais persistidos
-├── utils/           # Fetch externo e sanitização de HTML
+├── utils/           # Fetch externo, storage, classnames, filtros e sanitização
 ├── App.tsx          # Orquestração principal
 ├── index.css        # Estilos globais
 └── types.ts         # Contratos de dados

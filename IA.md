@@ -61,6 +61,8 @@ Dependências Python a instalar:
 [2026-05-25] Componentes grandes foram divididos por responsabilidade: cards, descrição, metadados, ações rápidas, filtros, stats e playlists.
 [2026-05-25] Regras puras de filtro, formatação, sanitização e normalização de playlists ficam em `utils/` ou hooks exportáveis com testes dedicados.
 [2026-05-25] Build Vite usa `base: './'` e fetch de JSONs via `import.meta.env.BASE_URL` para funcionar em subpastas como GitHub Pages.
+[2026-05-25] Utilitário `cx` incorporado do `felixo-standards/guias/frontend/GUIA-COMPONENTES-UI-COMPOSTOS.md` para classes condicionais sem dependência externa.
+[2026-05-25] Utilitários de storage centralizam o padrão Felixo de localStorage com fallback silencioso para checklist, likes e playlists.
 
 ---
 
@@ -84,6 +86,7 @@ Dependências Python a instalar:
 [2026-05-25] ✅ `npm run lint` — likes de episódio e filtro "Só curtidos" sem erro de lint.
 [2026-05-25] ✅ `npm run build` — TypeScript + Vite validaram hook e integração de likes.
 [2026-05-25] ✅ `npm run test` — Vitest validou sanitização HTML, normalização de playlists, formatação e filtros de episódios.
+[2026-05-25] ✅ `npm run test` — Vitest validou `cx` e helpers de storage local.
 [2026-05-25] ✅ `python -m compileall -q start.py scripts` — scripts Python compilam sem erro de sintaxe.
 [2026-05-25] ✅ `npm audit --audit-level=moderate` — nenhuma vulnerabilidade encontrada.
 
