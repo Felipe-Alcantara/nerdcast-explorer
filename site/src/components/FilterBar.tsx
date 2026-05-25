@@ -1,4 +1,4 @@
-import type { Program, Theme } from '../types'
+import type { GuestFilterOption, Program, Theme } from '../types'
 
 const SELECT_CLS = 'bg-[#1c1c28] border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-300 outline-none focus:border-violet-500/50 transition cursor-pointer'
 const BTN_CLS = 'bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/10 transition whitespace-nowrap cursor-pointer'
@@ -10,6 +10,8 @@ interface Props {
   onProgram: (v: string) => void
   selectedTheme: string
   onTheme: (v: string) => void
+  selectedGuest: string
+  onGuest: (v: string) => void
   yearFrom: string
   onYearFrom: (v: string) => void
   yearTo: string
@@ -20,6 +22,7 @@ interface Props {
   onToggleUnwatched: () => void
   programs: Program[]
   themes: Theme[]
+  guests: GuestFilterOption[]
   years: number[]
   total: number
   filtered: number
@@ -30,11 +33,12 @@ export function FilterBar({
   search, onSearch,
   selectedProgram, onProgram,
   selectedTheme, onTheme,
+  selectedGuest, onGuest,
   yearFrom, onYearFrom,
   yearTo, onYearTo,
   sortOrder, onSort,
   onlyUnwatched, onToggleUnwatched,
-  programs, themes, years,
+  programs, themes, guests, years,
   total, filtered,
   watchedCount,
 }: Props) {
@@ -58,7 +62,7 @@ export function FilterBar({
           </button>
         </div>
 
-        {/* Linha 2: programa + tema */}
+        {/* Linha 2: programa + tema + convidado */}
         <div className="flex flex-wrap gap-2">
           <select value={selectedProgram} onChange={e => onProgram(e.target.value)} className={`${SELECT_CLS} flex-1 min-w-45`}>
             <option value="">Todos os programas</option>
@@ -72,6 +76,14 @@ export function FilterBar({
             <option value="">Todos os temas</option>
             {themes.map(t => (
               <option key={t.slug} value={t.name}>{t.name}</option>
+            ))}
+          </select>
+          <select value={selectedGuest} onChange={e => onGuest(e.target.value)} className={`${SELECT_CLS} flex-1 min-w-45`}>
+            <option value="">Todos os convidados</option>
+            {guests.map(g => (
+              <option key={g.value} value={g.value}>
+                {g.name} ({g.count})
+              </option>
             ))}
           </select>
         </div>

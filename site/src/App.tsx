@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import type { Episode, Program, Theme } from './types'
+import type { Episode, GuestFilterOption, Program, Theme } from './types'
 import { FilterBar } from './components/FilterBar'
 import { EpisodeCard } from './components/EpisodeCard'
 import { useChecklist } from './hooks/useChecklist'
@@ -15,6 +15,7 @@ export default function App() {
   const [search, setSearch] = useState('')
   const [selectedProgram, setSelectedProgram] = useState('')
   const [selectedTheme, setSelectedTheme] = useState('')
+  const [selectedGuest, setSelectedGuest] = useState('')
   const [yearFrom, setYearFrom] = useState('')
   const [yearTo, setYearTo] = useState('')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
@@ -41,11 +42,43 @@ export default function App() {
     return Array.from(set).sort((a, b) => b - a)
   }, [episodes])
 
+  const guests = useMemo<GuestFilterOption[]>(() => {
+    const index = new Map<string, GuestFilterOption>()
+
+    for (const episode of episodes) {
+      for (const guest of episode.guests) {
+        const name = guest.name.trim()
+        const value = name.toLocaleLowerCase('pt-BR')
+
+        if (!name || !value) {
+          continue
+        }
+
+        const option = index.get(value)
+
+        if (option) {
+          option.count += 1
+        } else {
+          index.set(value, { name, value, count: 1 })
+        }
+      }
+    }
+
+    return Array.from(index.values()).sort((a, b) =>
+      a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' })
+    )
+  }, [episodes])
+
   const filtered = useMemo(() => {
     let list = episodes
 
     if (selectedProgram) list = list.filter(e => e.program.slug === selectedProgram)
     if (selectedTheme) list = list.filter(e => e.theme === selectedTheme)
+    if (selectedGuest) {
+      list = list.filter(e =>
+        e.guests.some(g => g.name.trim().toLocaleLowerCase('pt-BR') === selectedGuest)
+      )
+    }
     if (yearFrom) list = list.filter(e => e.year !== null && e.year >= parseInt(yearFrom))
     if (yearTo) list = list.filter(e => e.year !== null && e.year <= parseInt(yearTo))
     if (search.trim()) {
@@ -62,7 +95,7 @@ export default function App() {
         ? a.date < b.date ? 1 : -1
         : a.date > b.date ? 1 : -1
     )
-  }, [episodes, search, selectedProgram, selectedTheme, yearFrom, yearTo, sortOrder, onlyUnwatched, isWatched])
+  }, [episodes, search, selectedProgram, selectedTheme, selectedGuest, yearFrom, yearTo, sortOrder, onlyUnwatched, isWatched])
 
   const visible = useMemo(() => filtered.slice(0, page * PAGE_SIZE), [filtered, page])
 
@@ -77,6 +110,10 @@ export default function App() {
   }, [resetPage])
   const handleTheme = useCallback((value: string) => {
     setSelectedTheme(value)
+    resetPage()
+  }, [resetPage])
+  const handleGuest = useCallback((value: string) => {
+    setSelectedGuest(value)
     resetPage()
   }, [resetPage])
   const handleYearFrom = useCallback((value: string) => {
@@ -114,11 +151,12 @@ export default function App() {
         search={search} onSearch={handleSearch}
         selectedProgram={selectedProgram} onProgram={handleProgram}
         selectedTheme={selectedTheme} onTheme={handleTheme}
+        selectedGuest={selectedGuest} onGuest={handleGuest}
         yearFrom={yearFrom} onYearFrom={handleYearFrom}
         yearTo={yearTo} onYearTo={handleYearTo}
         sortOrder={sortOrder} onSort={handleSort}
         onlyUnwatched={onlyUnwatched} onToggleUnwatched={handleToggleUnwatched}
-        programs={programs} themes={themes} years={years}
+        programs={programs} themes={themes} guests={guests} years={years}
         total={episodes.length} filtered={filtered.length}
         watchedCount={watchedCount}
       />

@@ -18,6 +18,12 @@ export interface Guest {
 
 export type EpisodeGuest = Guest
 
+export interface GuestFilterOption {
+  name: string
+  value: string
+  count: number
+}
+
 export interface Episode {
   id: string
   wp_id: number
