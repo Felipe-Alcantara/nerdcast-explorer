@@ -21,6 +21,8 @@ interface Props {
   onSort: (v: 'asc' | 'desc') => void
   onlyUnwatched: boolean
   onToggleUnwatched: () => void
+  onlyLiked: boolean
+  onToggleLiked: () => void
   selectedPlaylistId: string
   playlistOnly: boolean
   onPlaylist: (id: string) => void
@@ -35,6 +37,7 @@ interface Props {
   total: number
   filtered: number
   watchedCount: number
+  likedCount: number
 }
 
 export function FilterBar({
@@ -46,11 +49,13 @@ export function FilterBar({
   yearTo, onYearTo,
   sortOrder, onSort,
   onlyUnwatched, onToggleUnwatched,
+  onlyLiked, onToggleLiked,
   selectedPlaylistId, playlistOnly,
   onPlaylist, onCreatePlaylist, onDeletePlaylist, onTogglePlaylistOnly,
   programs, themes, guests, playlists, years,
   total, filtered,
   watchedCount,
+  likedCount,
 }: Props) {
   const pct = total > 0 ? Math.round((watchedCount / total) * 100) : 0
 
@@ -130,6 +135,12 @@ export function FilterBar({
           >
             {onlyUnwatched ? '✓ Só não ouvidos' : 'Só não ouvidos'}
           </button>
+          <button
+            onClick={onToggleLiked}
+            className={`${BTN_CLS} ${onlyLiked ? 'border-rose-500/50 text-rose-300 bg-rose-500/10' : ''}`}
+          >
+            {onlyLiked ? '♥ Só curtidos' : 'Só curtidos'}
+          </button>
         </div>
 
         {/* Linha 5: contadores */}
@@ -145,6 +156,8 @@ export function FilterBar({
             {' / '}{total.toLocaleString('pt-BR')}
             {' '}
             <span className="text-violet-400">({pct}%)</span>
+            <span className="mx-2 text-slate-700">·</span>
+            Curtidos: <span className="text-rose-300">{likedCount.toLocaleString('pt-BR')}</span>
           </p>
         </div>
 

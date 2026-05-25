@@ -3,6 +3,7 @@ import type { Episode, GuestFilterOption, Program, Theme } from './types'
 import { FilterBar } from './components/FilterBar'
 import { EpisodeCard } from './components/EpisodeCard'
 import { useChecklist } from './hooks/useChecklist'
+import { useLikes } from './hooks/useLikes'
 import { usePlaylists } from './hooks/usePlaylists'
 
 const PAGE_SIZE = 100
@@ -21,11 +22,13 @@ export default function App() {
   const [yearTo, setYearTo] = useState('')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
   const [onlyUnwatched, setOnlyUnwatched] = useState(false)
+  const [onlyLiked, setOnlyLiked] = useState(false)
   const [selectedPlaylistId, setSelectedPlaylistId] = useState('')
   const [playlistOnly, setPlaylistOnly] = useState(false)
   const [page, setPage] = useState(1)
 
   const { toggle, isWatched, count: watchedCount } = useChecklist()
+  const { toggle: toggleLike, isLiked, count: likedCount } = useLikes()
   const { playlists, createPlaylist, deletePlaylist, toggleEpisodeInPlaylist } = usePlaylists()
 
   useEffect(() => {
@@ -106,6 +109,7 @@ export default function App() {
       )
     }
     if (onlyUnwatched) list = list.filter(e => !isWatched(e.id))
+    if (onlyLiked) list = list.filter(e => isLiked(e.id))
 
     return [...list].sort((a, b) =>
       sortOrder === 'desc'
@@ -124,7 +128,9 @@ export default function App() {
     yearTo,
     search,
     onlyUnwatched,
+    onlyLiked,
     isWatched,
+    isLiked,
     sortOrder,
   ])
 
@@ -161,6 +167,10 @@ export default function App() {
   }, [resetPage])
   const handleToggleUnwatched = useCallback(() => {
     setOnlyUnwatched(v => !v)
+    resetPage()
+  }, [resetPage])
+  const handleToggleLiked = useCallback(() => {
+    setOnlyLiked(v => !v)
     resetPage()
   }, [resetPage])
   const handlePlaylist = useCallback((id: string) => {
@@ -242,6 +252,7 @@ export default function App() {
         yearTo={yearTo} onYearTo={handleYearTo}
         sortOrder={sortOrder} onSort={handleSort}
         onlyUnwatched={onlyUnwatched} onToggleUnwatched={handleToggleUnwatched}
+        onlyLiked={onlyLiked} onToggleLiked={handleToggleLiked}
         selectedPlaylistId={selectedPlaylistId}
         playlistOnly={playlistOnly}
         onPlaylist={handlePlaylist}
@@ -251,6 +262,7 @@ export default function App() {
         programs={programs} themes={themes} guests={guests} playlists={playlists} years={years}
         total={episodes.length} filtered={filtered.length}
         watchedCount={watchedCount}
+        likedCount={likedCount}
       />
 
       <main className="max-w-5xl mx-auto">
@@ -269,7 +281,9 @@ export default function App() {
                 key={ep.id}
                 episode={ep}
                 watched={isWatched(ep.id)}
+                liked={isLiked(ep.id)}
                 onToggle={toggle}
+                onToggleLike={toggleLike}
                 activePlaylistName={selectedPlaylist?.name ?? ''}
                 isInActivePlaylist={selectedPlaylistEpisodeIds.has(ep.id)}
                 onTogglePlaylist={handleToggleEpisodeInPlaylist}
