@@ -10,7 +10,7 @@
 
 **Acervo não-oficial do NerdCast para explorar, filtrar, favoritar e organizar episódios.**
 
-[Sobre](#sobre-o-projeto) • [Funcionalidades](#funcionalidades) • [Estrutura](#estrutura-do-projeto) • [Como Usar](#como-usar)
+[Demo ao vivo](https://nerdcast.felixo.com.br) • [Sobre](#sobre-o-projeto) • [Funcionalidades](#funcionalidades) • [Estrutura](#estrutura-do-projeto) • [Como Usar](#como-usar)
 
 </div>
 
@@ -23,6 +23,7 @@
 - [Estrutura do Projeto](#estrutura-do-projeto)
 - [Como Usar](#como-usar)
 - [Dados e Integrações](#dados-e-integrações)
+- [Deploy](#deploy)
 - [Limitações](#limitações)
 - [Licença](#licença)
 - [Autor](#autor)
@@ -46,7 +47,8 @@ Os dados principais ficam em JSON estático dentro de `data/` e `site/public/`. 
 - Ordenação por data, do mais recente ou mais antigo.
 - Checklist local de episódios ouvidos.
 - Likes locais para marcar favoritos.
-- Playlists pessoais salvas no navegador.
+- Playlists pessoais salvas no navegador, com exportação e importação para compartilhar entre usuários (arquivo JSON, código copiável ou link `#share=...` com auto-detecção).
+- Resolução manual de conflitos na importação (substituir, mesclar, criar nova ou pular por item).
 - Comentários locais por episódio para anotar marcações e momentos engraçados.
 - Descrição completa carregada sob demanda pelo WordPress REST do Jovem Nerd.
 - Carregamento incremental da lista com botão "Carregar mais".
@@ -84,7 +86,9 @@ nerdcast-explorer/
 │   └── src/
 │       ├── components/    # Componentes de UI da aplicação
 │       ├── hooks/         # Estado local persistido
-│       └── utils/         # Integrações e sanitização
+│       └── utils/         # Integrações, sanitização e share de playlists
+├── Dockerfile             # Build do site servido em produção
+├── railway.json           # Configuração de deploy na Railway
 ├── IA.md                  # Contexto operacional para IA
 ├── README.md              # Este arquivo
 └── start.py               # Setup e dev server local
@@ -144,12 +148,21 @@ python -m compileall -q start.py scripts
 
 ---
 
+## Deploy
+
+- Produção: <https://nerdcast.felixo.com.br>
+- Hospedagem: Railway com auto-deploy a partir do `main`.
+- Build: `Dockerfile` na raiz constrói o frontend e serve os assets estáticos.
+- Configuração do deploy: [railway.json](railway.json).
+
+---
+
 ## Limitações
 
 - Projeto não-oficial, sem vínculo com Jovem Nerd ou Jovem Nerd S/A.
-- Checklist, likes, playlists e comentários ficam no navegador e não sincronizam entre dispositivos.
+- Checklist, likes e comentários ficam no navegador e não sincronizam automaticamente entre dispositivos.
+- Playlists não sincronizam automaticamente, mas podem ser exportadas e importadas manualmente.
 - A descrição completa depende de chamada externa ao WordPress REST no primeiro carregamento.
-- O deploy público ainda está a definir.
 
 ---
 
