@@ -149,41 +149,43 @@ export function FilterBar({
   }
 
   return (
-    <div className="sticky top-0 z-20 bg-[#0f0f13]/95 backdrop-blur border-b border-white/5 px-4 py-3">
-      <div className="max-w-5xl mx-auto flex flex-col gap-3">
-        <FilterSearchSort
-          search={search}
-          onSearch={onSearch}
-          sortOrder={sortOrder}
-          onSort={onSort}
-        />
-
-        <div className="hidden md:flex md:flex-col md:gap-3">
-          {renderFilterControls()}
-        </div>
-
-        <div className="hidden md:block">
-          <FilterStats
-            total={total}
-            filtered={filtered}
-            watchedCount={watchedCount}
-            likedCount={likedCount}
+    <>
+      <div className="sticky top-0 z-20 bg-[#0f0f13]/95 backdrop-blur border-b border-white/5 px-4 py-3">
+        <div className="max-w-5xl mx-auto flex flex-col gap-3">
+          <FilterSearchSort
+            search={search}
+            onSearch={onSearch}
+            sortOrder={sortOrder}
+            onSort={onSort}
           />
-        </div>
 
-        <div className="flex items-center gap-3 md:hidden">
-          <p className="min-w-0 flex-1 truncate text-xs text-slate-500">
-            {filtered === total
-              ? `${total.toLocaleString('pt-BR')} episodios`
-              : `${filtered.toLocaleString('pt-BR')} de ${total.toLocaleString('pt-BR')} episodios`}
-          </p>
-          <button
-            type="button"
-            onClick={() => setMobileFiltersOpen(true)}
-            className={cx(BTN_CLS, 'shrink-0 border-violet-500/40 text-violet-200')}
-          >
-            Filtros{activeFilterCount > 0 ? ` (${activeFilterCount})` : ''}
-          </button>
+          <div className="hidden md:flex md:flex-col md:gap-3">
+            {renderFilterControls()}
+          </div>
+
+          <div className="hidden md:block">
+            <FilterStats
+              total={total}
+              filtered={filtered}
+              watchedCount={watchedCount}
+              likedCount={likedCount}
+            />
+          </div>
+
+          <div className="flex items-center gap-3 md:hidden">
+            <p className="min-w-0 flex-1 truncate text-xs text-slate-500">
+              {filtered === total
+                ? `${total.toLocaleString('pt-BR')} episodios`
+                : `${filtered.toLocaleString('pt-BR')} de ${total.toLocaleString('pt-BR')} episodios`}
+            </p>
+            <button
+              type="button"
+              onClick={() => setMobileFiltersOpen(true)}
+              className={cx(BTN_CLS, 'shrink-0 border-violet-500/40 text-violet-200')}
+            >
+              Filtros{activeFilterCount > 0 ? ` (${activeFilterCount})` : ''}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -192,7 +194,7 @@ export function FilterBar({
           role="dialog"
           aria-modal="true"
           aria-label="Filtros"
-          className="fixed inset-0 z-50 flex h-[100dvh] flex-col bg-[#0f0f13] md:hidden"
+          className="fixed inset-0 z-50 flex h-dvh flex-col bg-[#0f0f13] md:hidden"
         >
           <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
             <div>
@@ -227,6 +229,6 @@ export function FilterBar({
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }
