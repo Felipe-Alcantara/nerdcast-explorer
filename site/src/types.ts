@@ -16,7 +16,7 @@ export interface Guest {
   photo: string
 }
 
-export interface EpisodeGuest extends Guest {}
+export type EpisodeGuest = Guest
 
 export interface Episode {
   id: string

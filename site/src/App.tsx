@@ -66,11 +66,35 @@ export default function App() {
 
   const visible = useMemo(() => filtered.slice(0, page * PAGE_SIZE), [filtered, page])
 
-  useEffect(() => {
-    setPage(1)
-  }, [search, selectedProgram, selectedTheme, yearFrom, yearTo, sortOrder, onlyUnwatched])
-
-  const handleToggleUnwatched = useCallback(() => setOnlyUnwatched(v => !v), [])
+  const resetPage = useCallback(() => setPage(1), [])
+  const handleSearch = useCallback((value: string) => {
+    setSearch(value)
+    resetPage()
+  }, [resetPage])
+  const handleProgram = useCallback((value: string) => {
+    setSelectedProgram(value)
+    resetPage()
+  }, [resetPage])
+  const handleTheme = useCallback((value: string) => {
+    setSelectedTheme(value)
+    resetPage()
+  }, [resetPage])
+  const handleYearFrom = useCallback((value: string) => {
+    setYearFrom(value)
+    resetPage()
+  }, [resetPage])
+  const handleYearTo = useCallback((value: string) => {
+    setYearTo(value)
+    resetPage()
+  }, [resetPage])
+  const handleSort = useCallback((value: 'asc' | 'desc') => {
+    setSortOrder(value)
+    resetPage()
+  }, [resetPage])
+  const handleToggleUnwatched = useCallback(() => {
+    setOnlyUnwatched(v => !v)
+    resetPage()
+  }, [resetPage])
 
   return (
     <div className="min-h-screen bg-[#0f0f13] text-slate-200">
@@ -87,12 +111,12 @@ export default function App() {
       </header>
 
       <FilterBar
-        search={search} onSearch={setSearch}
-        selectedProgram={selectedProgram} onProgram={setSelectedProgram}
-        selectedTheme={selectedTheme} onTheme={setSelectedTheme}
-        yearFrom={yearFrom} onYearFrom={setYearFrom}
-        yearTo={yearTo} onYearTo={setYearTo}
-        sortOrder={sortOrder} onSort={setSortOrder}
+        search={search} onSearch={handleSearch}
+        selectedProgram={selectedProgram} onProgram={handleProgram}
+        selectedTheme={selectedTheme} onTheme={handleTheme}
+        yearFrom={yearFrom} onYearFrom={handleYearFrom}
+        yearTo={yearTo} onYearTo={handleYearTo}
+        sortOrder={sortOrder} onSort={handleSort}
         onlyUnwatched={onlyUnwatched} onToggleUnwatched={handleToggleUnwatched}
         programs={programs} themes={themes} years={years}
         total={episodes.length} filtered={filtered.length}
