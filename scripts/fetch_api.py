@@ -78,6 +78,59 @@ def clean_text(t) -> str:
     return html.unescape(str(t)).strip()
 
 
+_GUEST_LOOKUP: dict[str, dict] = {}
+
+
+def set_guest_lookup(guests: list) -> None:
+    """Indexa guests globais por nome normalizado para enriquecer episodios."""
+    _GUEST_LOOKUP.clear()
+    for g in guests:
+        name = (g.get("name") or "").strip().lower()
+        if name:
+            _GUEST_LOOKUP[name] = g
+
+
+def enrich_guest(name: str) -> dict:
+    """Procura nome no lookup global e retorna registro completo."""
+    key = name.strip().lower()
+    hit = _GUEST_LOOKUP.get(key)
+    if hit:
+        return {
+            "id": hit.get("id"),
+            "name": hit.get("name") or name,
+            "twitter": hit.get("twitter") or "",
+            "photo": hit.get("photo") or "",
+        }
+    return {"id": None, "name": name, "twitter": "", "photo": ""}
+
+
+def parse_episode_guests(raw_guests) -> list:
+    """
+    O endpoint LIST retorna guests como string ('Nome1,Nome2,Nome3').
+    O endpoint DETAIL retorna como list[dict] com photo+twitter completos.
+    Esta funcao trata os dois formatos e enriquece via lookup global.
+    """
+    if not raw_guests:
+        return []
+    if isinstance(raw_guests, str):
+        names = [n.strip() for n in raw_guests.split(",") if n.strip()]
+        return [enrich_guest(clean_text(n)) for n in names]
+    if isinstance(raw_guests, list):
+        out = []
+        for g in raw_guests:
+            if isinstance(g, str):
+                out.append(enrich_guest(clean_text(g)))
+            elif isinstance(g, dict):
+                out.append({
+                    "id": g.get("id"),
+                    "name": clean_text(g.get("name")),
+                    "twitter": g.get("twitter") or "",
+                    "photo": g.get("image") or g.get("photo") or "",
+                })
+        return out
+    return []
+
+
 def simplify_episode(raw: dict) -> dict:
     """Schema final usado pelo site."""
     pub = raw.get("published_at", "") or raw.get("pub_date", "")
@@ -93,20 +146,7 @@ def simplify_episode(raw: dict) -> dict:
         except ValueError:
             pass
 
-    guests = []
-    for g in raw.get("guests") or []:
-        # Alguns episodios antigos retornam guests como string simples (nome solto).
-        if isinstance(g, str):
-            guests.append({"id": None, "name": clean_text(g), "twitter": "", "photo": ""})
-            continue
-        if not isinstance(g, dict):
-            continue
-        guests.append({
-            "id": g.get("id"),
-            "name": clean_text(g.get("name")),
-            "twitter": g.get("twitter") or "",
-            "photo": g.get("image") or "",
-        })
+    guests = parse_episode_guests(raw.get("guests"))
 
     return {
         "id": f"ep-{raw['id']}",
@@ -180,16 +220,9 @@ def derive_programs(episodes: list) -> list:
 def main():
     DATA_DIR.mkdir(exist_ok=True)
 
-    print("Baixando episodios...")
-    raw_eps = fetch_paginated("nerdcasts")
-    episodes = [simplify_episode(e) for e in raw_eps]
-    episodes.sort(key=lambda e: e["date"], reverse=True)
-    (DATA_DIR / "episodes.json").write_text(
-        json.dumps(episodes, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
-    print(f"OK: {len(episodes)} episodios em data/episodes.json")
-
-    print("\nBaixando convidados...")
+    # Convidados primeiro: usados para enriquecer guests dos episodios.
+    print("Baixando convidados...")
+    guests = []
     try:
         guests = [simplify_guest(g) for g in fetch_single("nerdcasts/guests")]
         (DATA_DIR / "guests.json").write_text(
@@ -198,6 +231,16 @@ def main():
         print(f"OK: {len(guests)} convidados em data/guests.json")
     except Exception as e:
         print(f"ERRO em guests: {e}")
+    set_guest_lookup(guests)
+
+    print("\nBaixando episodios...")
+    raw_eps = fetch_paginated("nerdcasts")
+    episodes = [simplify_episode(e) for e in raw_eps]
+    episodes.sort(key=lambda e: e["date"], reverse=True)
+    (DATA_DIR / "episodes.json").write_text(
+        json.dumps(episodes, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    print(f"OK: {len(episodes)} episodios em data/episodes.json")
 
     print("\nBaixando temas...")
     try:
