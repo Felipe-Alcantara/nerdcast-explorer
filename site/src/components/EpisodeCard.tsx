@@ -16,6 +16,12 @@ function formatDuration(seconds: number | null): string {
   return h > 0 ? `${h}h${m.toString().padStart(2, '0')}` : `${m}min`
 }
 
+function guestUrl(twitter: string): string {
+  if (!twitter) return ''
+  if (/^https?:\/\//i.test(twitter)) return twitter
+  return `https://twitter.com/${twitter.replace(/^@/, '')}`
+}
+
 function stripHtml(html: string): string {
   return html
     .replace(/<[^>]*>/g, ' ')
@@ -128,7 +134,28 @@ export function EpisodeCard({ episode, watched, onToggle }: Props) {
 
         {episode.guests.length > 0 && (
           <p className="text-xs text-slate-500 truncate">
-            com {episode.guests.map(g => g.name).join(', ')}
+            com{' '}
+            {episode.guests.map((g, i) => {
+              const url = guestUrl(g.twitter)
+              return (
+                <span key={g.id ?? g.name}>
+                  {i > 0 && ', '}
+                  {url ? (
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-violet-300 hover:underline underline-offset-2 transition"
+                      title={`Abrir Twitter de ${g.name}`}
+                    >
+                      {g.name}
+                    </a>
+                  ) : (
+                    g.name
+                  )}
+                </span>
+              )
+            })}
           </p>
         )}
 
