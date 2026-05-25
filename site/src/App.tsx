@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import type { Episode } from './types'
+import type { Episode, Program, Theme } from './types'
 import { FilterBar } from './components/FilterBar'
 import { EpisodeCard } from './components/EpisodeCard'
 import { useChecklist } from './hooks/useChecklist'
@@ -8,10 +8,13 @@ const PAGE_SIZE = 100
 
 export default function App() {
   const [episodes, setEpisodes] = useState<Episode[]>([])
+  const [programs, setPrograms] = useState<Program[]>([])
+  const [themes, setThemes] = useState<Theme[]>([])
   const [loading, setLoading] = useState(true)
 
   const [search, setSearch] = useState('')
-  const [selectedType, setSelectedType] = useState('')
+  const [selectedProgram, setSelectedProgram] = useState('')
+  const [selectedTheme, setSelectedTheme] = useState('')
   const [yearFrom, setYearFrom] = useState('')
   const [yearTo, setYearTo] = useState('')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
@@ -21,18 +24,17 @@ export default function App() {
   const { toggle, isWatched, count: watchedCount } = useChecklist()
 
   useEffect(() => {
-    fetch('/episodes.json')
-      .then(r => r.json())
-      .then((data: Episode[]) => {
-        setEpisodes(data)
-        setLoading(false)
-      })
+    Promise.all([
+      fetch('/episodes.json').then(r => r.json() as Promise<Episode[]>),
+      fetch('/programs.json').then(r => r.json() as Promise<Program[]>),
+      fetch('/themes.json').then(r => r.json() as Promise<Theme[]>),
+    ]).then(([eps, progs, thms]) => {
+      setEpisodes(eps)
+      setPrograms(progs)
+      setThemes(thms.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR')))
+      setLoading(false)
+    })
   }, [])
-
-  const types = useMemo(() => {
-    const set = new Set(episodes.map(e => e.type))
-    return Array.from(set).sort()
-  }, [episodes])
 
   const years = useMemo(() => {
     const set = new Set(episodes.map(e => e.year).filter(Boolean) as number[])
@@ -42,12 +44,16 @@ export default function App() {
   const filtered = useMemo(() => {
     let list = episodes
 
-    if (selectedType) list = list.filter(e => e.type === selectedType)
+    if (selectedProgram) list = list.filter(e => e.program.slug === selectedProgram)
+    if (selectedTheme) list = list.filter(e => e.theme === selectedTheme)
     if (yearFrom) list = list.filter(e => e.year !== null && e.year >= parseInt(yearFrom))
     if (yearTo) list = list.filter(e => e.year !== null && e.year <= parseInt(yearTo))
     if (search.trim()) {
       const q = search.trim().toLowerCase()
-      list = list.filter(e => e.title.toLowerCase().includes(q))
+      list = list.filter(e =>
+        e.title.toLowerCase().includes(q) ||
+        e.guests.some(g => g.name.toLowerCase().includes(q))
+      )
     }
     if (onlyUnwatched) list = list.filter(e => !isWatched(e.id))
 
@@ -56,13 +62,13 @@ export default function App() {
         ? a.date < b.date ? 1 : -1
         : a.date > b.date ? 1 : -1
     )
-  }, [episodes, search, selectedType, yearFrom, yearTo, sortOrder, onlyUnwatched, isWatched])
+  }, [episodes, search, selectedProgram, selectedTheme, yearFrom, yearTo, sortOrder, onlyUnwatched, isWatched])
 
   const visible = useMemo(() => filtered.slice(0, page * PAGE_SIZE), [filtered, page])
 
   useEffect(() => {
     setPage(1)
-  }, [search, selectedType, yearFrom, yearTo, sortOrder, onlyUnwatched])
+  }, [search, selectedProgram, selectedTheme, yearFrom, yearTo, sortOrder, onlyUnwatched])
 
   const handleToggleUnwatched = useCallback(() => setOnlyUnwatched(v => !v), [])
 
@@ -73,19 +79,22 @@ export default function App() {
           <span className="text-2xl">🎙️</span>
           <div>
             <h1 className="text-xl font-semibold text-white leading-none">NerdCast Explorer</h1>
-            <p className="text-xs text-slate-500 mt-0.5">Acervo não-oficial · 2006–2024</p>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Acervo não-oficial · {episodes.length.toLocaleString('pt-BR')} episódios desde 2006
+            </p>
           </div>
         </div>
       </header>
 
       <FilterBar
         search={search} onSearch={setSearch}
-        selectedType={selectedType} onType={setSelectedType}
+        selectedProgram={selectedProgram} onProgram={setSelectedProgram}
+        selectedTheme={selectedTheme} onTheme={setSelectedTheme}
         yearFrom={yearFrom} onYearFrom={setYearFrom}
         yearTo={yearTo} onYearTo={setYearTo}
         sortOrder={sortOrder} onSort={setSortOrder}
         onlyUnwatched={onlyUnwatched} onToggleUnwatched={handleToggleUnwatched}
-        types={types} years={years}
+        programs={programs} themes={themes} years={years}
         total={episodes.length} filtered={filtered.length}
         watchedCount={watchedCount}
       />
