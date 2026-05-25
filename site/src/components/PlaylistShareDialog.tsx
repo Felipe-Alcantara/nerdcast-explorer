@@ -241,7 +241,12 @@ function ExportPane({
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <label className="text-xs text-slate-500">O que exportar</label>
-        <select value={scope} onChange={event => onScopeChange(event.target.value)} className={SELECT_CLS}>
+        <select
+          aria-label="Escolher escopo da exportação"
+          value={scope}
+          onChange={event => onScopeChange(event.target.value)}
+          className={SELECT_CLS}
+        >
           <option value="all">Todas as playlists ({playlists.length})</option>
           {playlists.map(playlist => (
             <option key={playlist.id} value={playlist.id}>

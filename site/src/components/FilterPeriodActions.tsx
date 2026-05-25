@@ -27,14 +27,24 @@ export function FilterPeriodActions({
   return (
     <div className="flex flex-wrap gap-2 items-center">
       <span className="text-xs text-slate-500 shrink-0">Período:</span>
-      <select value={yearFrom} onChange={event => onYearFrom(event.target.value)} className={SELECT_CLS}>
+      <select
+        aria-label="Ano inicial"
+        value={yearFrom}
+        onChange={event => onYearFrom(event.target.value)}
+        className={SELECT_CLS}
+      >
         <option value="">Desde</option>
         {[...years].reverse().map(year => (
           <option key={year} value={String(year)}>{year}</option>
         ))}
       </select>
       <span className="text-xs text-slate-500">até</span>
-      <select value={yearTo} onChange={event => onYearTo(event.target.value)} className={SELECT_CLS}>
+      <select
+        aria-label="Ano final"
+        value={yearTo}
+        onChange={event => onYearTo(event.target.value)}
+        className={SELECT_CLS}
+      >
         <option value="">Hoje</option>
         {years.map(year => (
           <option key={year} value={String(year)}>{year}</option>

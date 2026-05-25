@@ -53,6 +53,7 @@ export function PlaylistControls({
   return (
     <div className="flex flex-col lg:flex-row gap-2">
       <select
+        aria-label="Selecionar playlist"
         value={selectedPlaylistId}
         onChange={event => onPlaylist(event.target.value)}
         className={cx(SELECT_CLS, 'flex-1 min-w-45')}
