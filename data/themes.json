@@ -1,0 +1,178 @@
+[
+  {
+    "slug": "animacao",
+    "name": "Animação"
+  },
+  {
+    "slug": "artes-marciais",
+    "name": "Artes Marciais"
+  },
+  {
+    "slug": "audio-drama",
+    "name": "Audio Drama"
+  },
+  {
+    "slug": "biografia",
+    "name": "Biografia"
+  },
+  {
+    "slug": "ciencias",
+    "name": "Ciências"
+  },
+  {
+    "slug": "cinema",
+    "name": "Cinema"
+  },
+  {
+    "slug": "comportamento",
+    "name": "Comportamento"
+  },
+  {
+    "slug": "cotidiano",
+    "name": "Cotidiano"
+  },
+  {
+    "slug": "dia-dos-namorados",
+    "name": "Dia dos Namorados"
+  },
+  {
+    "slug": "educacao",
+    "name": "Educação"
+  },
+  {
+    "slug": "empreendedorismo",
+    "name": "Empreendedorismo"
+  },
+  {
+    "slug": "entrevistas",
+    "name": "Entrevistas"
+  },
+  {
+    "slug": "esportes",
+    "name": "Esportes"
+  },
+  {
+    "slug": "filmes",
+    "name": "Filmes"
+  },
+  {
+    "slug": "game-of-thrones",
+    "name": "Game of Thrones"
+  },
+  {
+    "slug": "games",
+    "name": "Games"
+  },
+  {
+    "slug": "gastronomia",
+    "name": "Gastronomia"
+  },
+  {
+    "slug": "historia",
+    "name": "História"
+  },
+  {
+    "slug": "historia-alternativa",
+    "name": "História Alternativa"
+  },
+  {
+    "slug": "internet",
+    "name": "Internet"
+  },
+  {
+    "slug": "lendas-e-misterios",
+    "name": "Lendas e Mistérios"
+  },
+  {
+    "slug": "literatura",
+    "name": "Literatura"
+  },
+  {
+    "slug": "lost",
+    "name": "Lost"
+  },
+  {
+    "slug": "mais-populares",
+    "name": "MAIS POPULARES"
+  },
+  {
+    "slug": "melhores-momentos",
+    "name": "Melhores Momentos"
+  },
+  {
+    "slug": "musica",
+    "name": "Música"
+  },
+  {
+    "slug": "nerd-na-cloud",
+    "name": "Nerd na Cloud"
+  },
+  {
+    "slug": "nostalgia",
+    "name": "Nostalgia"
+  },
+  {
+    "slug": "noticias",
+    "name": "Notícias"
+  },
+  {
+    "slug": "politica",
+    "name": "Política"
+  },
+  {
+    "slug": "profissoes",
+    "name": "Profissões"
+  },
+  {
+    "slug": "publicidade",
+    "name": "Publicidade"
+  },
+  {
+    "slug": "quadrinhos",
+    "name": "Quadrinhos"
+  },
+  {
+    "slug": "retrospectiva",
+    "name": "Retrospectiva"
+  },
+  {
+    "slug": "rpg",
+    "name": "RPG"
+  },
+  {
+    "slug": "sem-pauta",
+    "name": "Sem Pauta"
+  },
+  {
+    "slug": "series",
+    "name": "Séries"
+  },
+  {
+    "slug": "star-wars",
+    "name": "Star Wars"
+  },
+  {
+    "slug": "tecnologia",
+    "name": "Tecnologia"
+  },
+  {
+    "slug": "teoria-da-conspiracao",
+    "name": "Teoria da Conspiração"
+  },
+  {
+    "slug": "terror",
+    "name": "Terror"
+  },
+  {
+    "slug": "trabalho",
+    "name": "Trabalho"
+  },
+  {
+    "slug": "tv",
+    "name": "TV"
+  },
+  {
+    "slug": "viagens",
+    "name": "Viagens"
+  }
+]
