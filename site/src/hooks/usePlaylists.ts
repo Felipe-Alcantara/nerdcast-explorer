@@ -9,7 +9,7 @@ function createId(): string {
     : `playlist-${Date.now()}-${Math.random().toString(36).slice(2)}`
 }
 
-function normalizePlaylists(value: unknown): Playlist[] {
+export function normalizePlaylists(value: unknown): Playlist[] {
   if (!Array.isArray(value)) {
     return []
   }
