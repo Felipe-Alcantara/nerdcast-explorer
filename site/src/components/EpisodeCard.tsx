@@ -2,36 +2,8 @@ import { useMemo, useState } from 'react'
 import type { Episode } from '../types'
 import { ProgramBadge } from './ProgramBadge'
 import { fetchEpisodeFullDescription } from '../utils/episode-content'
+import { formatDuration, formatEpisodeDate, guestUrl, thumbUrl } from '../utils/episode-format'
 import { sanitizeDescriptionHtml, stripHtml } from '../utils/html'
-
-const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
-
-function formatDate(date: string): string {
-  if (!date) return ''
-  const [year, month, day] = date.split('-')
-  return `${day} ${MONTHS[parseInt(month) - 1]} ${year}`
-}
-
-function formatDuration(seconds: number | null): string {
-  if (!seconds) return ''
-  const h = Math.floor(seconds / 3600)
-  const m = Math.floor((seconds % 3600) / 60)
-  return h > 0 ? `${h}h${m.toString().padStart(2, '0')}` : `${m}min`
-}
-
-function guestUrl(twitter: string): string {
-  if (!twitter) return ''
-  if (/^https?:\/\//i.test(twitter)) return twitter
-  return `https://twitter.com/${twitter.replace(/^@/, '')}`
-}
-
-function thumbUrl(image: string): string {
-  if (!image) return ''
-  // Já tem dimensão no nome do arquivo? Usa direto.
-  if (/-\d+x\d+\.(jpg|jpeg|png|webp)/i.test(image)) return image
-  // Senão, pede resize via query (CDN do site suporta)
-  return image.includes('?') ? image : `${image}?ims=180x180/filters:quality(75)`
-}
 
 interface Props {
   episode: Episode
@@ -271,7 +243,7 @@ export function EpisodeCard({
 
       {/* Metadados à direita */}
       <div className="flex flex-col items-end gap-1 shrink-0 text-xs text-slate-500">
-        <span>{formatDate(episode.date)}</span>
+        <span>{formatEpisodeDate(episode.date)}</span>
         {duration && <span>{duration}</span>}
         {activePlaylistName && (
           <button
