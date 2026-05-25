@@ -1,80 +1,21 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import type { Episode, GuestFilterOption, Program, Theme } from './types'
+import { useCallback, useMemo, useState } from 'react'
 import { FilterBar } from './components/FilterBar'
 import { EpisodeCard } from './components/EpisodeCard'
 import { useChecklist } from './hooks/useChecklist'
+import { useEpisodeData } from './hooks/useEpisodeData'
+import { useEpisodeFilters } from './hooks/useEpisodeFilters'
 import { useLikes } from './hooks/useLikes'
 import { usePlaylists } from './hooks/usePlaylists'
 
 const PAGE_SIZE = 100
 
 export default function App() {
-  const [episodes, setEpisodes] = useState<Episode[]>([])
-  const [programs, setPrograms] = useState<Program[]>([])
-  const [themes, setThemes] = useState<Theme[]>([])
-  const [loading, setLoading] = useState(true)
-
-  const [search, setSearch] = useState('')
-  const [selectedProgram, setSelectedProgram] = useState('')
-  const [selectedTheme, setSelectedTheme] = useState('')
-  const [selectedGuest, setSelectedGuest] = useState('')
-  const [yearFrom, setYearFrom] = useState('')
-  const [yearTo, setYearTo] = useState('')
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
-  const [onlyUnwatched, setOnlyUnwatched] = useState(false)
-  const [onlyLiked, setOnlyLiked] = useState(false)
   const [selectedPlaylistId, setSelectedPlaylistId] = useState('')
-  const [playlistOnly, setPlaylistOnly] = useState(false)
-  const [page, setPage] = useState(1)
 
+  const { episodes, programs, themes, loading, error } = useEpisodeData()
   const { toggle, isWatched, count: watchedCount } = useChecklist()
   const { toggle: toggleLike, isLiked, count: likedCount } = useLikes()
   const { playlists, createPlaylist, deletePlaylist, toggleEpisodeInPlaylist } = usePlaylists()
-
-  useEffect(() => {
-    Promise.all([
-      fetch('/episodes.json').then(r => r.json() as Promise<Episode[]>),
-      fetch('/programs.json').then(r => r.json() as Promise<Program[]>),
-      fetch('/themes.json').then(r => r.json() as Promise<Theme[]>),
-    ]).then(([eps, progs, thms]) => {
-      setEpisodes(eps)
-      setPrograms(progs)
-      setThemes(thms.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR')))
-      setLoading(false)
-    })
-  }, [])
-
-  const years = useMemo(() => {
-    const set = new Set(episodes.map(e => e.year).filter(Boolean) as number[])
-    return Array.from(set).sort((a, b) => b - a)
-  }, [episodes])
-
-  const guests = useMemo<GuestFilterOption[]>(() => {
-    const index = new Map<string, GuestFilterOption>()
-
-    for (const episode of episodes) {
-      for (const guest of episode.guests) {
-        const name = guest.name.trim()
-        const value = name.toLocaleLowerCase('pt-BR')
-
-        if (!name || !value) {
-          continue
-        }
-
-        const option = index.get(value)
-
-        if (option) {
-          option.count += 1
-        } else {
-          index.set(value, { name, value, count: 1 })
-        }
-      }
-    }
-
-    return Array.from(index.values()).sort((a, b) =>
-      a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' })
-    )
-  }, [episodes])
 
   const selectedPlaylist = useMemo(
     () => playlists.find(playlist => playlist.id === selectedPlaylistId) ?? null,
@@ -86,100 +27,25 @@ export default function App() {
     [selectedPlaylist]
   )
 
-  const filtered = useMemo(() => {
-    let list = episodes
-
-    if (playlistOnly && selectedPlaylist) {
-      list = list.filter(e => selectedPlaylistEpisodeIds.has(e.id))
-    }
-    if (selectedProgram) list = list.filter(e => e.program.slug === selectedProgram)
-    if (selectedTheme) list = list.filter(e => e.theme === selectedTheme)
-    if (selectedGuest) {
-      list = list.filter(e =>
-        e.guests.some(g => g.name.trim().toLocaleLowerCase('pt-BR') === selectedGuest)
-      )
-    }
-    if (yearFrom) list = list.filter(e => e.year !== null && e.year >= parseInt(yearFrom))
-    if (yearTo) list = list.filter(e => e.year !== null && e.year <= parseInt(yearTo))
-    if (search.trim()) {
-      const q = search.trim().toLowerCase()
-      list = list.filter(e =>
-        e.title.toLowerCase().includes(q) ||
-        e.guests.some(g => g.name.toLowerCase().includes(q))
-      )
-    }
-    if (onlyUnwatched) list = list.filter(e => !isWatched(e.id))
-    if (onlyLiked) list = list.filter(e => isLiked(e.id))
-
-    return [...list].sort((a, b) =>
-      sortOrder === 'desc'
-        ? a.date < b.date ? 1 : -1
-        : a.date > b.date ? 1 : -1
-    )
-  }, [
+  const episodeFilters = useEpisodeFilters({
     episodes,
-    playlistOnly,
-    selectedPlaylist,
-    selectedPlaylistEpisodeIds,
-    selectedProgram,
-    selectedTheme,
-    selectedGuest,
-    yearFrom,
-    yearTo,
-    search,
-    onlyUnwatched,
-    onlyLiked,
     isWatched,
     isLiked,
-    sortOrder,
-  ])
+    playlistEpisodeIds: selectedPlaylistEpisodeIds,
+    hasSelectedPlaylist: !!selectedPlaylist,
+    pageSize: PAGE_SIZE,
+  })
+  const { resetPage, setPlaylistOnly } = episodeFilters
 
-  const visible = useMemo(() => filtered.slice(0, page * PAGE_SIZE), [filtered, page])
-
-  const resetPage = useCallback(() => setPage(1), [])
-  const handleSearch = useCallback((value: string) => {
-    setSearch(value)
-    resetPage()
-  }, [resetPage])
-  const handleProgram = useCallback((value: string) => {
-    setSelectedProgram(value)
-    resetPage()
-  }, [resetPage])
-  const handleTheme = useCallback((value: string) => {
-    setSelectedTheme(value)
-    resetPage()
-  }, [resetPage])
-  const handleGuest = useCallback((value: string) => {
-    setSelectedGuest(value)
-    resetPage()
-  }, [resetPage])
-  const handleYearFrom = useCallback((value: string) => {
-    setYearFrom(value)
-    resetPage()
-  }, [resetPage])
-  const handleYearTo = useCallback((value: string) => {
-    setYearTo(value)
-    resetPage()
-  }, [resetPage])
-  const handleSort = useCallback((value: 'asc' | 'desc') => {
-    setSortOrder(value)
-    resetPage()
-  }, [resetPage])
-  const handleToggleUnwatched = useCallback(() => {
-    setOnlyUnwatched(v => !v)
-    resetPage()
-  }, [resetPage])
-  const handleToggleLiked = useCallback(() => {
-    setOnlyLiked(v => !v)
-    resetPage()
-  }, [resetPage])
   const handlePlaylist = useCallback((id: string) => {
     setSelectedPlaylistId(id)
     if (!id) {
       setPlaylistOnly(false)
+    } else {
+      resetPage()
     }
-    resetPage()
-  }, [resetPage])
+  }, [resetPage, setPlaylistOnly])
+
   const handleCreatePlaylist = useCallback((name: string) => {
     const normalizedName = name.trim().toLocaleLowerCase('pt-BR')
     const existingPlaylist = playlists.find(playlist =>
@@ -189,7 +55,6 @@ export default function App() {
     if (existingPlaylist) {
       setSelectedPlaylistId(existingPlaylist.id)
       setPlaylistOnly(false)
-      resetPage()
 
       return true
     }
@@ -202,27 +67,19 @@ export default function App() {
 
     setSelectedPlaylistId(id)
     setPlaylistOnly(false)
-    resetPage()
 
     return true
-  }, [createPlaylist, playlists, resetPage])
+  }, [createPlaylist, playlists, setPlaylistOnly])
+
   const handleDeletePlaylist = useCallback((id: string) => {
     deletePlaylist(id)
 
     if (id === selectedPlaylistId) {
       setSelectedPlaylistId('')
       setPlaylistOnly(false)
-      resetPage()
     }
-  }, [deletePlaylist, resetPage, selectedPlaylistId])
-  const handleTogglePlaylistOnly = useCallback(() => {
-    if (!selectedPlaylistId) {
-      return
-    }
+  }, [deletePlaylist, selectedPlaylistId, setPlaylistOnly])
 
-    setPlaylistOnly(v => !v)
-    resetPage()
-  }, [resetPage, selectedPlaylistId])
   const handleToggleEpisodeInPlaylist = useCallback((episodeId: string) => {
     if (selectedPlaylistId) {
       toggleEpisodeInPlaylist(selectedPlaylistId, episodeId)
@@ -244,23 +101,23 @@ export default function App() {
       </header>
 
       <FilterBar
-        search={search} onSearch={handleSearch}
-        selectedProgram={selectedProgram} onProgram={handleProgram}
-        selectedTheme={selectedTheme} onTheme={handleTheme}
-        selectedGuest={selectedGuest} onGuest={handleGuest}
-        yearFrom={yearFrom} onYearFrom={handleYearFrom}
-        yearTo={yearTo} onYearTo={handleYearTo}
-        sortOrder={sortOrder} onSort={handleSort}
-        onlyUnwatched={onlyUnwatched} onToggleUnwatched={handleToggleUnwatched}
-        onlyLiked={onlyLiked} onToggleLiked={handleToggleLiked}
+        search={episodeFilters.search} onSearch={episodeFilters.handleSearch}
+        selectedProgram={episodeFilters.selectedProgram} onProgram={episodeFilters.handleProgram}
+        selectedTheme={episodeFilters.selectedTheme} onTheme={episodeFilters.handleTheme}
+        selectedGuest={episodeFilters.selectedGuest} onGuest={episodeFilters.handleGuest}
+        yearFrom={episodeFilters.yearFrom} onYearFrom={episodeFilters.handleYearFrom}
+        yearTo={episodeFilters.yearTo} onYearTo={episodeFilters.handleYearTo}
+        sortOrder={episodeFilters.sortOrder} onSort={episodeFilters.handleSort}
+        onlyUnwatched={episodeFilters.onlyUnwatched} onToggleUnwatched={episodeFilters.handleToggleUnwatched}
+        onlyLiked={episodeFilters.onlyLiked} onToggleLiked={episodeFilters.handleToggleLiked}
         selectedPlaylistId={selectedPlaylistId}
-        playlistOnly={playlistOnly}
+        playlistOnly={episodeFilters.playlistOnly}
         onPlaylist={handlePlaylist}
         onCreatePlaylist={handleCreatePlaylist}
         onDeletePlaylist={handleDeletePlaylist}
-        onTogglePlaylistOnly={handleTogglePlaylistOnly}
-        programs={programs} themes={themes} guests={guests} playlists={playlists} years={years}
-        total={episodes.length} filtered={filtered.length}
+        onTogglePlaylistOnly={episodeFilters.handleTogglePlaylistOnly}
+        programs={programs} themes={themes} guests={episodeFilters.guests} playlists={playlists} years={episodeFilters.years}
+        total={episodes.length} filtered={episodeFilters.filtered.length}
         watchedCount={watchedCount}
         likedCount={likedCount}
       />
@@ -270,13 +127,17 @@ export default function App() {
           <div className="flex items-center justify-center py-24 text-slate-500 text-sm">
             Carregando episódios...
           </div>
-        ) : filtered.length === 0 ? (
+        ) : error ? (
+          <div className="flex items-center justify-center py-24 text-amber-300 text-sm">
+            {error}
+          </div>
+        ) : episodeFilters.filtered.length === 0 ? (
           <div className="flex items-center justify-center py-24 text-slate-500 text-sm">
             Nenhum episódio encontrado
           </div>
         ) : (
           <>
-            {visible.map(ep => (
+            {episodeFilters.visible.map(ep => (
               <EpisodeCard
                 key={ep.id}
                 episode={ep}
@@ -289,13 +150,13 @@ export default function App() {
                 onTogglePlaylist={handleToggleEpisodeInPlaylist}
               />
             ))}
-            {visible.length < filtered.length && (
+            {episodeFilters.visible.length < episodeFilters.filtered.length && (
               <div className="flex justify-center py-6">
                 <button
-                  onClick={() => setPage(p => p + 1)}
+                  onClick={() => episodeFilters.setPage(p => p + 1)}
                   className="px-5 py-2 text-sm bg-white/5 border border-white/10 rounded-lg text-slate-300 hover:bg-white/10 transition cursor-pointer"
                 >
-                  Carregar mais ({filtered.length - visible.length} restantes)
+                  Carregar mais ({episodeFilters.filtered.length - episodeFilters.visible.length} restantes)
                 </button>
               </div>
             )}

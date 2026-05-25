@@ -24,6 +24,8 @@ export interface GuestFilterOption {
   count: number
 }
 
+export type SortOrder = 'asc' | 'desc'
+
 export interface Playlist {
   id: string
   name: string
