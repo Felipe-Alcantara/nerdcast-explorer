@@ -57,6 +57,7 @@ Dependências Python a instalar:
 [2026-05-25] GitHub Actions para atualização automática — roda `update_rss.py` semanalmente e faz commit/PR automático se houver novos eps.
 [2026-05-25] Filtro por convidado derivado de `episodes.json` — evita novo arquivo de índice e mantém contagem sincronizada com os episódios carregados.
 [2026-05-25] Playlists pessoais no localStorage (`nerdcast-playlists`) — sem login/backend, alinhado ao checklist local e suficiente para a v1.
+[2026-05-25] Likes de episódio no localStorage (`nerdcast-liked`) — estado independente de ouvido, com filtro dedicado para recuperar favoritos.
 
 ---
 
@@ -77,6 +78,8 @@ Dependências Python a instalar:
 [2026-05-25] ✅ `npm run build` — build validou tipos do novo filtro por convidado.
 [2026-05-25] ✅ `npm run lint` — criador local de playlists sem erro de lint.
 [2026-05-25] ✅ `npm run build` — TypeScript + Vite validaram hook, controles e integração das playlists.
+[2026-05-25] ✅ `npm run lint` — likes de episódio e filtro "Só curtidos" sem erro de lint.
+[2026-05-25] ✅ `npm run build` — TypeScript + Vite validaram hook e integração de likes.
 
 ---
 
