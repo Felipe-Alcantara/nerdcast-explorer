@@ -1,4 +1,5 @@
 import type { Episode } from '../types'
+import { cx } from '../utils/cx'
 import { EpisodeDescription } from './EpisodeDescription'
 import { EpisodeGuests } from './EpisodeGuests'
 import { EpisodeMetadata } from './EpisodeMetadata'
@@ -28,7 +29,10 @@ export function EpisodeCard({
   onTogglePlaylist,
 }: Props) {
   return (
-    <div className={`flex items-start gap-3 px-4 py-3 border-b border-white/5 hover:bg-white/3 transition group ${watched ? 'opacity-40' : ''}`}>
+    <div className={cx(
+      'flex items-start gap-3 px-4 py-3 border-b border-white/5 hover:bg-white/3 transition group',
+      watched && 'opacity-40'
+    )}>
       <EpisodeQuickActions
         episodeId={episode.id}
         watched={watched}
@@ -54,7 +58,10 @@ export function EpisodeCard({
           )}
         </div>
 
-        <p className={`text-sm leading-snug ${watched ? 'line-through text-slate-500' : 'text-slate-200'}`}>
+        <p className={cx(
+          'text-sm leading-snug',
+          watched ? 'line-through text-slate-500' : 'text-slate-200'
+        )}>
           {episode.url ? (
             <a
               href={episode.url}

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Playlist } from '../types'
+import { cx } from '../utils/cx'
 import { BTN_CLS, INPUT_CLS, SELECT_CLS } from './filterStyles'
 
 interface Props {
@@ -52,7 +53,7 @@ export function PlaylistControls({
       <select
         value={selectedPlaylistId}
         onChange={event => onPlaylist(event.target.value)}
-        className={`${SELECT_CLS} flex-1 min-w-45`}
+        className={cx(SELECT_CLS, 'flex-1 min-w-45')}
       >
         <option value="">Selecionar playlist</option>
         {playlists.map(playlist => (
@@ -68,7 +69,7 @@ export function PlaylistControls({
           value={newPlaylistName}
           onChange={event => setNewPlaylistName(event.target.value)}
           placeholder="Nova playlist..."
-          className={`${INPUT_CLS} min-w-0 flex-1`}
+          className={cx(INPUT_CLS, 'min-w-0 flex-1')}
         />
         <button type="submit" disabled={!canCreate} className={BTN_CLS}>
           Criar
@@ -80,7 +81,7 @@ export function PlaylistControls({
           type="button"
           onClick={onTogglePlaylistOnly}
           disabled={!selectedPlaylist}
-          className={`${BTN_CLS} ${playlistOnly ? 'border-violet-500/50 text-violet-300 bg-violet-500/10' : ''}`}
+          className={cx(BTN_CLS, playlistOnly && 'border-violet-500/50 text-violet-300 bg-violet-500/10')}
         >
           {playlistOnly ? 'Ver todos' : 'Só playlist'}
         </button>

@@ -1,4 +1,5 @@
 import type { SortOrder } from '../types'
+import { cx } from '../utils/cx'
 import { BTN_CLS, INPUT_CLS } from './filterStyles'
 
 interface Props {
@@ -16,7 +17,7 @@ export function FilterSearchSort({ search, onSearch, sortOrder, onSort }: Props)
         value={search}
         onChange={event => onSearch(event.target.value)}
         placeholder="Buscar episódio..."
-        className={`${INPUT_CLS} flex-1 px-4`}
+        className={cx(INPUT_CLS, 'flex-1 px-4')}
       />
       <button
         type="button"

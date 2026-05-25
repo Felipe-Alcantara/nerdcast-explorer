@@ -1,4 +1,5 @@
 import type { Program } from '../types'
+import { cx } from '../utils/cx'
 
 const COLORS: Record<string, string> = {
   'nerdcast':            'bg-violet-600/20 text-violet-300 border-violet-500/30',
@@ -27,7 +28,7 @@ interface Props {
 export function ProgramBadge({ program }: Props) {
   const color = COLORS[program.slug] ?? FALLBACK
   return (
-    <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded border ${color} shrink-0`}>
+    <span className={cx('inline-block text-xs font-medium px-2 py-0.5 rounded border shrink-0', color)}>
       {program.name}
     </span>
   )

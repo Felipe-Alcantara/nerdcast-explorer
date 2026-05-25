@@ -1,3 +1,4 @@
+import { cx } from '../utils/cx'
 import { BTN_CLS, SELECT_CLS } from './filterStyles'
 
 interface Props {
@@ -45,14 +46,14 @@ export function FilterPeriodActions({
       <button
         type="button"
         onClick={onToggleUnwatched}
-        className={`${BTN_CLS} ${onlyUnwatched ? 'border-violet-500/50 text-violet-300 bg-violet-500/10' : ''}`}
+        className={cx(BTN_CLS, onlyUnwatched && 'border-violet-500/50 text-violet-300 bg-violet-500/10')}
       >
         {onlyUnwatched ? '✓ Só não ouvidos' : 'Só não ouvidos'}
       </button>
       <button
         type="button"
         onClick={onToggleLiked}
-        className={`${BTN_CLS} ${onlyLiked ? 'border-rose-500/50 text-rose-300 bg-rose-500/10' : ''}`}
+        className={cx(BTN_CLS, onlyLiked && 'border-rose-500/50 text-rose-300 bg-rose-500/10')}
       >
         {onlyLiked ? '♥ Só curtidos' : 'Só curtidos'}
       </button>

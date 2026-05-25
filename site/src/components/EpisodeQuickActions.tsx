@@ -1,3 +1,5 @@
+import { cx } from '../utils/cx'
+
 interface Props {
   episodeId: string
   watched: boolean
@@ -20,11 +22,12 @@ export function EpisodeQuickActions({
         onClick={() => onToggleWatched(episodeId)}
         title={watched ? 'Marcar como não ouvido' : 'Marcar como ouvido'}
         aria-label={watched ? 'Marcar como não ouvido' : 'Marcar como ouvido'}
-        className={`w-5 h-5 rounded border flex items-center justify-center transition cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400 ${
+        className={cx(
+          'w-5 h-5 rounded border flex items-center justify-center transition cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400',
           watched
             ? 'bg-violet-600 border-violet-500'
             : 'border-white/20 hover:border-violet-400 bg-transparent'
-        }`}
+        )}
       >
         {watched && (
           <svg className="w-3 h-3 text-white" viewBox="0 0 12 12" fill="none" aria-hidden="true">
@@ -38,11 +41,12 @@ export function EpisodeQuickActions({
         onClick={() => onToggleLike(episodeId)}
         title={liked ? 'Remover like' : 'Marcar like'}
         aria-label={liked ? 'Remover like' : 'Marcar like'}
-        className={`w-5 h-5 rounded border flex items-center justify-center transition cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400 ${
+        className={cx(
+          'w-5 h-5 rounded border flex items-center justify-center transition cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400',
           liked
             ? 'bg-rose-500/15 border-rose-500/60 text-rose-300'
             : 'border-white/20 text-slate-500 hover:border-rose-400 hover:text-rose-300 bg-transparent'
-        }`}
+        )}
       >
         <svg className="w-3 h-3" viewBox="0 0 24 24" fill={liked ? 'currentColor' : 'none'} aria-hidden="true">
           <path
