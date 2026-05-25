@@ -53,16 +53,35 @@ export function EpisodeCard({ episode, watched, onToggle }: Props) {
         )}
       </button>
 
-      {/* Thumbnail */}
+      {/* Thumbnail (também é link) */}
       {thumb && (
-        <img
-          src={thumb}
-          alt=""
-          loading="lazy"
-          width={64}
-          height={64}
-          className="shrink-0 w-16 h-16 rounded object-cover bg-white/5"
-        />
+        episode.url ? (
+          <a
+            href={episode.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0"
+            title={`Abrir "${episode.title}" no Jovem Nerd`}
+          >
+            <img
+              src={thumb}
+              alt=""
+              loading="lazy"
+              width={64}
+              height={64}
+              className="w-16 h-16 rounded object-cover bg-white/5 hover:opacity-80 transition"
+            />
+          </a>
+        ) : (
+          <img
+            src={thumb}
+            alt=""
+            loading="lazy"
+            width={64}
+            height={64}
+            className="shrink-0 w-16 h-16 rounded object-cover bg-white/5"
+          />
+        )
       )}
 
       {/* Conteúdo */}
@@ -83,7 +102,8 @@ export function EpisodeCard({ episode, watched, onToggle }: Props) {
               href={episode.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-violet-300 transition"
+              className="hover:text-violet-300 hover:underline underline-offset-2 transition"
+              title={`Abrir no Jovem Nerd: ${episode.url}`}
             >
               {episode.title}
             </a>
