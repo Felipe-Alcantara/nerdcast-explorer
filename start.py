@@ -11,6 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 SITE = ROOT / "site"
 DATA = ROOT / "data" / "episodes.json"
+PY_REQUIREMENTS = ROOT / "scripts" / "requirements.txt"
 
 
 def run(cmd, cwd=None, check=True):
@@ -36,8 +37,8 @@ def install_python_deps():
         import openpyxl  # noqa: F401
         print("  openpyxl ja instalado")
     except ImportError:
-        run([sys.executable, "-m", "pip", "install", "openpyxl", "-q"])
-        print("  openpyxl instalado")
+        run([sys.executable, "-m", "pip", "install", "-r", str(PY_REQUIREMENTS), "-q"])
+        print("  dependencias Python instaladas")
 
 
 def generate_data():

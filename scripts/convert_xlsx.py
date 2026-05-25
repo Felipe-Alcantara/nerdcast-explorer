@@ -1,6 +1,7 @@
 """
 Converte o Excel histórico (2006-2024) para data/episodes.json.
-Roda uma única vez para criar a base. Depois use update_rss.py.
+Ferramenta legada para quem tem os arquivos originais.
+Para dados atuais e schema completo do site, use fetch_api.py.
 """
 
 import json
