@@ -67,6 +67,21 @@ Dependências Python a instalar:
 
 ---
 
+## 🧪 TESTES IMPORTANTES
+
+[2026-05-25] ✅ `npm run lint` — ESLint sem erros no frontend.
+[2026-05-25] ✅ `npm run build` — TypeScript + Vite build sem erros.
+
+---
+
+## 🐛 BUGS & FIXES RELEVANTES
+
+[2026-05-25] BUG: Cards de episódio exibiam só o teaser curto vindo de `description`.
+CAUSA: o endpoint de lista `/jovemnerd/v1/nerdcasts` retorna apenas o resumo; o conteúdo completo fica no WordPress REST `wp/v2/podcast/?slug=...`.
+FIX: o frontend busca `content.rendered` sob demanda ao abrir "Ver descricao completa", com cache, sanitizacao de HTML e fallback para o resumo local.
+
+---
+
 ## 🔗 INTEGRAÇÕES & SERVIÇOS EXTERNOS
 
 [2026-05-25] Feeds RSS do Jovem Nerd — usados para atualização incremental de episódios.
@@ -78,6 +93,10 @@ Dependências Python a instalar:
 
 [2026-05-25] Base histórica: Excel com 1.767 episódios de 20 programas (2006–dez/2024), fornecido pelo usuário.
   Arquivo: `Arquivos Excel/Análise Feed NerdCast.xlsx`
+
+[2026-05-25] WordPress REST do Jovem Nerd — usado no frontend para carregar descricao completa de episodio sob demanda.
+  Endpoint: `https://admin.jovemnerd.com.br/wp-json/wp/v2/podcast/?slug={slug}`
+  Campo usado: `content.rendered`
 
 ---
 
