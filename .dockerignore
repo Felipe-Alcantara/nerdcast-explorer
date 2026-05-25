@@ -1,0 +1,8 @@
+.git
+.claude
+Arquivos Excel
+felixo-standards
+__pycache__
+site/node_modules
+site/dist
+*.pyc
