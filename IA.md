@@ -55,6 +55,7 @@ Dependências Python a instalar:
 [2026-05-25] Checklist no localStorage — sem login. Justificativa: simplicidade > persistência cross-device para v1.
 [2026-05-25] Scripts Python separados por responsabilidade: `convert_xlsx.py` (one-shot histórico), `update_rss.py` (recorrente), `scrape_all.py` (pontual).
 [2026-05-25] GitHub Actions para atualização automática — roda `update_rss.py` semanalmente e faz commit/PR automático se houver novos eps.
+[2026-05-25] Filtro por convidado derivado de `episodes.json` — evita novo arquivo de índice e mantém contagem sincronizada com os episódios carregados.
 
 ---
 
@@ -71,6 +72,8 @@ Dependências Python a instalar:
 
 [2026-05-25] ✅ `npm run lint` — ESLint sem erros no frontend.
 [2026-05-25] ✅ `npm run build` — TypeScript + Vite build sem erros.
+[2026-05-25] ✅ `npm run lint` — filtro por convidado integrado sem erro de lint.
+[2026-05-25] ✅ `npm run build` — build validou tipos do novo filtro por convidado.
 
 ---
 
