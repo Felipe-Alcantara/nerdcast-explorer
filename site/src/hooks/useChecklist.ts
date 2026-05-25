@@ -1,24 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
+import { loadStringSet, saveStringSet } from '../utils/storage'
 
 const STORAGE_KEY = 'nerdcast-watched'
 
-function load(): Set<string> {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? new Set(JSON.parse(raw)) : new Set()
-  } catch {
-    return new Set()
-  }
-}
-
-function save(set: Set<string>) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(set)))
-}
-
 export function useChecklist() {
-  const [watched, setWatched] = useState<Set<string>>(() => load())
+  const [watched, setWatched] = useState<Set<string>>(() => loadStringSet(STORAGE_KEY))
 
-  useEffect(() => { save(watched) }, [watched])
+  useEffect(() => { saveStringSet(STORAGE_KEY, watched) }, [watched])
 
   const toggle = useCallback((id: string) => {
     setWatched(prev => {

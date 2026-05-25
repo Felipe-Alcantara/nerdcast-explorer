@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { Playlist } from '../types'
+import { loadJson, saveJson } from '../utils/storage'
 
 const STORAGE_KEY = 'nerdcast-playlists'
 
@@ -35,16 +36,11 @@ export function normalizePlaylists(value: unknown): Playlist[] {
 }
 
 function load(): Playlist[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? normalizePlaylists(JSON.parse(raw)) : []
-  } catch {
-    return []
-  }
+  return loadJson(STORAGE_KEY, [], normalizePlaylists)
 }
 
 function save(playlists: Playlist[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(playlists))
+  saveJson(STORAGE_KEY, playlists)
 }
 
 export function usePlaylists() {

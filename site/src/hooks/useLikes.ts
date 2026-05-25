@@ -1,24 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
+import { loadStringSet, saveStringSet } from '../utils/storage'
 
 const STORAGE_KEY = 'nerdcast-liked'
 
-function load(): Set<string> {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? new Set(JSON.parse(raw)) : new Set()
-  } catch {
-    return new Set()
-  }
-}
-
-function save(set: Set<string>) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(set)))
-}
-
 export function useLikes() {
-  const [liked, setLiked] = useState<Set<string>>(() => load())
+  const [liked, setLiked] = useState<Set<string>>(() => loadStringSet(STORAGE_KEY))
 
-  useEffect(() => { save(liked) }, [liked])
+  useEffect(() => { saveStringSet(STORAGE_KEY, liked) }, [liked])
 
   const toggle = useCallback((id: string) => {
     setLiked(prev => {
