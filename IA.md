@@ -27,9 +27,15 @@ Deploy alvo: GitHub Pages ou Vercel (site estático, zero custo).
 [2026-05-25] ✅ Frontend — comentários locais por episódio via localStorage
 [2026-05-25] ✅ Qualidade — frontend modularizado em hooks, componentes focados e utilitários testáveis
 [2026-05-25] ✅ Qualidade — Vitest cobrindo sanitização, playlists, formatação e filtros críticos
-[2026-05-25] ⬜ Frontend — stats e exploração
-[2026-05-25] ⬜ Frontend — guia para iniciantes
-[2026-05-25] ⬜ Deploy do site
+[2026-05-28] ✅ Frontend — compartilhamento de playlists via URL (`#share=`), arquivo JSON e código copiável
+[2026-05-28] ✅ Frontend — resolução de conflitos na importação de playlists (substituir, mesclar, duplicar, pular)
+[2026-05-28] ✅ Frontend — FilterStats (ouvidos, curtidos, barra de progresso) visível no mobile e no drawer de filtros
+[2026-05-28] ✅ Frontend — filtros sempre visíveis (removido drawer fullscreen mobile)
+[2026-05-28] ✅ Frontend — export/import de backup completo (ouvidos, curtidos, anotações, playlists) via `DataBackupDialog`
+[2026-05-28] ✅ Fix — `start.py` detecta e usa o `npm` co-localizado com o `node` encontrado no PATH, evitando mismatch de versão (Node 18 vs Node 25)
+[2026-05-28] ✅ Deploy — produção ativa em https://nerdcast.felixo.com.br via Railway com auto-deploy do `main`
+[2026-05-28] ⬜ Frontend — stats e exploração
+[2026-05-28] ⬜ Frontend — guia para iniciantes
 
 ---
 
@@ -42,6 +48,7 @@ Deploy alvo: GitHub Pages ou Vercel (site estático, zero custo).
 [2026-05-25] Dados: JSON estático gerado por Python — sem backend, sem banco
 [2026-05-25] Checklist: localStorage no browser — sem login, sem servidor
 [2026-05-25] Hosting: GitHub Pages ou Vercel (a definir)
+[2026-05-28] Hosting: Railway com Dockerfile — auto-deploy via push no `main`. Deploy ativo em https://nerdcast.felixo.com.br
 
 Dependências Python a instalar:
 - `openpyxl` — leitura do Excel histórico local
@@ -65,6 +72,11 @@ Dependências Python a instalar:
 [2026-05-25] Build Vite usa `base: './'` e fetch de JSONs via `import.meta.env.BASE_URL` para funcionar em subpastas como GitHub Pages.
 [2026-05-25] Utilitário `cx` incorporado do `felixo-standards/guias/frontend/GUIA-COMPONENTES-UI-COMPOSTOS.md` para classes condicionais sem dependência externa.
 [2026-05-25] Utilitários de storage centralizam o padrão Felixo de localStorage com fallback silencioso para checklist, likes e playlists.
+[2026-05-28] Compartilhamento de playlists via `utils/playlistShare.ts` — serialização em Base64 comprimida, lida automaticamente pelo `App.tsx` na abertura via URL `#share=...`.
+[2026-05-28] Backup completo em `utils/dataBackup.ts` — exporta/importa as 4 chaves do localStorage (`nerdcast-watched`, `nerdcast-liked`, `nerdcast-episode-comments`, `nerdcast-playlists`) em arquivo JSON versionado. Importação pede confirmação antes de sobrescrever e recarrega a página após sucesso.
+[2026-05-28] FilterBar simplificado — removido o drawer fullscreen mobile. Todos os filtros ficam sempre visíveis em coluna, sem estado de abertura/fechamento.
+[2026-05-28] FilterStats exibido no mobile diretamente na barra de filtros (sempre visível), alinhado ao comportamento já existente no desktop.
+[2026-05-28] `start.py` corrigido para usar o `npm` do mesmo diretório do `node` encontrado via `shutil.which`, evitando que o npm do sistema instale bindings nativos para uma versão diferente de Node.
 
 ---
 
@@ -92,10 +104,16 @@ Dependências Python a instalar:
 [2026-05-25] ✅ `python -m compileall -q start.py scripts` — scripts Python compilam sem erro de sintaxe.
 [2026-05-25] ✅ `npm audit --audit-level=moderate` — nenhuma vulnerabilidade encontrada.
 [2026-05-25] ✅ Vitest cobre normalização de comentários locais por episódio.
+[2026-05-28] ✅ `tsc --noEmit` — sem erros de tipo após adição de `DataBackupDialog` e `PlaylistShareDialog`.
+[2026-05-28] ✅ Vitest cobre `playlistShare.ts` (serialização/desserialização do `#share=` URL).
 
 ---
 
 ## 🐛 BUGS & FIXES RELEVANTES
+
+[2026-05-28] BUG: `npm install` instalava bindings nativos do `rolldown` para Node 18 (sistema), mas o `start.py` rodava com Node 25 (nvm) — resultado: erro "Cannot find native binding" ao iniciar o Vite.
+CAUSA: `start.py` chamava `npm` do PATH padrão, que resolvia para o npm do Node 18, enquanto o `node` resolvido pelo shell era o Node 25 do nvm.
+FIX: `start.py` agora usa `shutil.which("node")` para localizar o binário do Node, e deriva o `npm` do mesmo diretório (`Path(node).parent / "npm"`), garantindo versões compatíveis.
 
 [2026-05-25] BUG: Cards de episódio exibiam só o teaser curto vindo de `description`.
 CAUSA: o endpoint de lista `/jovemnerd/v1/nerdcasts` retorna apenas o resumo; o conteúdo completo fica no WordPress REST `wp/v2/podcast/?slug=...`.
@@ -146,6 +164,11 @@ RESULTADO: `fetch_api.py` é o fluxo atual para dados completos; `convert_xlsx.p
 [2026-05-25] CONTEXTO: Alinhamento Felixo-Standards.
 RESUMO: O audit apontou documentação desatualizada, arquivos Excel versionados, componentes grandes e baixa cobertura de testes.
 RESULTADO: Documentação realinhada, Excel removido do índice do Git, frontend modularizado e regras críticas cobertas por Vitest.
+
+[2026-05-28] CONTEXTO: Persistência e portabilidade dos dados do usuário.
+ALTERNATIVAS: (a) sync via conta/servidor; (b) export/import manual de JSON; (c) compartilhamento apenas de playlists via URL.
+DECISÃO: Export/import de backup completo em JSON (`dataBackup.ts`) + compartilhamento de playlists via URL Base64 (`playlistShare.ts`). Mantém zero backend e zero login.
+VALIDAÇÃO: `tsc --noEmit` sem erros; importação com confirmação antes de sobrescrever dados existentes; reload automático após importar para refletir estado novo.
 
 ---
 

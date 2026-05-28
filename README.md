@@ -1,4 +1,4 @@
-# NerdCast Explorer
+# 🎙️ NerdCast Explorer
 
 <div align="center">
 
@@ -184,3 +184,7 @@ Este projeto está sob a licença MIT. Veja [LICENSE](LICENSE).
 ## Contribuições
 
 Contribuições são bem-vindas para corrigir dados, melhorar filtros, evoluir a interface ou reforçar a cobertura de testes.
+
+---
+
+⭐ Se o projeto foi útil, considere deixar uma estrela no GitHub!
