@@ -28,12 +28,23 @@ def step(msg):
     print(f"\n[{msg}]")
 
 
+NODE_BIN = None
+NPM_BIN = None
+
+
 def check_node():
-    result = subprocess.run(["node", "--version"], capture_output=True, text=True)
-    if result.returncode != 0:
+    global NODE_BIN, NPM_BIN
+    node = shutil.which("node")
+    if not node:
         print("ERRO: Node.js nao encontrado. Instale em https://nodejs.org/")
         sys.exit(1)
+    result = subprocess.run([node, "--version"], capture_output=True, text=True)
     print(f"  Node {result.stdout.strip()} encontrado")
+    NODE_BIN = node
+    # Use npm co-located with the found node binary
+    node_dir = Path(node).parent
+    npm_candidate = node_dir / "npm"
+    NPM_BIN = str(npm_candidate) if npm_candidate.exists() else shutil.which("npm")
 
 
 def install_python_deps():
@@ -76,7 +87,7 @@ def install_npm_deps():
     if (SITE / "node_modules").exists():
         print("  node_modules ja existe, pulando npm install")
     else:
-        run(["npm", "install"], cwd=SITE)
+        run([NPM_BIN, "install"], cwd=SITE)
 
 
 def start_dev_server():
@@ -87,9 +98,9 @@ def start_dev_server():
 
     try:
         if sys.platform == "win32":
-            subprocess.run(["npm", "run", "dev"], cwd=SITE, shell=True)
+            subprocess.run([NPM_BIN, "run", "dev"], cwd=SITE, shell=True)
         else:
-            subprocess.run(["npm", "run", "dev"], cwd=SITE)
+            subprocess.run([NPM_BIN, "run", "dev"], cwd=SITE)
     except KeyboardInterrupt:
         print("\n\nServidor encerrado.")
 
