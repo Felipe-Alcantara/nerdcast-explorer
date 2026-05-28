@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { FilterBar } from './components/FilterBar'
+import { DataBackupDialog } from './components/DataBackupDialog'
 import { EpisodeCard } from './components/EpisodeCard'
 import { PlaylistConflictDialog } from './components/PlaylistConflictDialog'
 import { PlaylistShareDialog } from './components/PlaylistShareDialog'
@@ -22,6 +23,7 @@ import {
 const PAGE_SIZE = 100
 
 export default function App() {
+  const [backupOpen, setBackupOpen] = useState(false)
   const [selectedPlaylistId, setSelectedPlaylistId] = useState('')
   const [initialShareFromUrl] = useState<ParsedShare | null>(() => readShareFromLocation())
   const [shareDialogOpen, setShareDialogOpen] = useState(() => initialShareFromUrl !== null)
@@ -147,12 +149,19 @@ export default function App() {
       <header className="border-b border-white/5 px-4 py-5">
         <div className="max-w-5xl mx-auto flex items-center gap-3">
           <span className="text-2xl">🎙️</span>
-          <div>
+          <div className="flex-1">
             <h1 className="text-xl font-semibold text-white leading-none">NerdCast Explorer</h1>
             <p className="text-xs text-slate-500 mt-0.5">
               Acervo não-oficial · {episodes.length.toLocaleString('pt-BR')} episódios desde 2006
             </p>
           </div>
+          <button
+            type="button"
+            onClick={() => setBackupOpen(true)}
+            className="text-xs text-slate-400 hover:text-slate-200 transition px-2 py-1 rounded border border-white/10 hover:border-white/20"
+          >
+            Backup
+          </button>
         </div>
       </header>
 
@@ -243,6 +252,13 @@ export default function App() {
 
       {importSummary && (
         <ImportToast result={importSummary} onClose={() => setImportSummary(null)} />
+      )}
+
+      {backupOpen && (
+        <DataBackupDialog
+          onClose={() => setBackupOpen(false)}
+          onImported={() => window.location.reload()}
+        />
       )}
     </div>
   )
