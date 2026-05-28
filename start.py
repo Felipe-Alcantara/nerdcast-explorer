@@ -19,9 +19,19 @@ REQUIRED_JSON = ("episodes.json", "programs.json", "themes.json")
 OPTIONAL_JSON = ("guests.json",)
 
 
-def run(cmd, cwd=None, check=True):
+def run(cmd, cwd=None, check=True, env=None):
     print(f"  > {' '.join(cmd)}")
-    return subprocess.run(cmd, cwd=cwd, check=check)
+    return subprocess.run(cmd, cwd=cwd, check=check, env=env)
+
+
+def node_env():
+    """Retorna um env com o diretorio do node no PATH para garantir que
+    o npm e os scripts npm acionem o node correto (evita nvm/sistema mismatch)."""
+    env = os.environ.copy()
+    if NODE_BIN:
+        node_dir = str(Path(NODE_BIN).parent)
+        env["PATH"] = f"{node_dir}:{env.get('PATH', '')}"
+    return env
 
 
 def step(msg):
@@ -87,7 +97,7 @@ def install_npm_deps():
     if (SITE / "node_modules").exists():
         print("  node_modules ja existe, pulando npm install")
     else:
-        run([NPM_BIN, "install"], cwd=SITE)
+        run([NPM_BIN, "install"], cwd=SITE, env=node_env())
 
 
 def start_dev_server():
@@ -98,9 +108,9 @@ def start_dev_server():
 
     try:
         if sys.platform == "win32":
-            subprocess.run([NPM_BIN, "run", "dev"], cwd=SITE, shell=True)
+            subprocess.run([NPM_BIN, "run", "dev"], cwd=SITE, shell=True, env=node_env())
         else:
-            subprocess.run([NPM_BIN, "run", "dev"], cwd=SITE)
+            subprocess.run([NPM_BIN, "run", "dev"], cwd=SITE, env=node_env())
     except KeyboardInterrupt:
         print("\n\nServidor encerrado.")
 

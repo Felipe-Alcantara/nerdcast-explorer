@@ -31,9 +31,17 @@ createServer(async (req, res) => {
   try {
     const filePath = resolvePath(req.url || '/')
     const data = await readFile(filePath)
-    res.writeHead(200, {
-      'Content-Type': contentTypes[extname(filePath)] || 'application/octet-stream',
-    })
+    const ext = extname(filePath)
+    const headers = {
+      'Content-Type': contentTypes[ext] || 'application/octet-stream',
+    }
+    // Permite que outros sites (ex: agregador Podcast Organizer) consumam
+    // os JSONs estaticos via fetch do browser.
+    if (ext === '.json') {
+      headers['Access-Control-Allow-Origin'] = '*'
+      headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+    }
+    res.writeHead(200, headers)
     res.end(data)
   } catch {
     const data = await readFile(join(root, 'index.html'))
