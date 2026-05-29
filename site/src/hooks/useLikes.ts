@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { loadStringSet, saveStringSet } from '../utils/storage'
 
-const STORAGE_KEY = 'nerdcast-liked'
+export function useLikes(storagePrefix: string) {
+  const storageKey = `${storagePrefix}-liked`
+  const [liked, setLiked] = useState<Set<string>>(() => loadStringSet(storageKey))
 
-export function useLikes() {
-  const [liked, setLiked] = useState<Set<string>>(() => loadStringSet(STORAGE_KEY))
-
-  useEffect(() => { saveStringSet(STORAGE_KEY, liked) }, [liked])
+  useEffect(() => { saveStringSet(storageKey, liked) }, [storageKey, liked])
 
   const toggle = useCallback((id: string) => {
     setLiked(prev => {

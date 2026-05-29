@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { loadJson, saveJson } from '../utils/storage'
 
-const STORAGE_KEY = 'nerdcast-episode-comments'
 export const MAX_EPISODE_COMMENT_LENGTH = 4000
 
 export type EpisodeComments = Record<string, string>
@@ -30,12 +29,13 @@ export function normalizeEpisodeComments(value: unknown): EpisodeComments {
   )
 }
 
-export function useEpisodeComments() {
+export function useEpisodeComments(storagePrefix: string) {
+  const storageKey = `${storagePrefix}-episode-comments`
   const [comments, setComments] = useState<EpisodeComments>(() =>
-    loadJson(STORAGE_KEY, {}, normalizeEpisodeComments)
+    loadJson(storageKey, {}, normalizeEpisodeComments)
   )
 
-  useEffect(() => { saveJson(STORAGE_KEY, comments) }, [comments])
+  useEffect(() => { saveJson(storageKey, comments) }, [storageKey, comments])
 
   const setComment = useCallback((episodeId: string, rawComment: string) => {
     const comment = sanitizeComment(rawComment)

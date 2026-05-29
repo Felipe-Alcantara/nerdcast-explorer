@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react'
 import type { Playlist } from '../types'
 import { loadJson, saveJson } from '../utils/storage'
 
-const STORAGE_KEY = 'nerdcast-playlists'
 
 export type ImportConflictAction = 'replace' | 'merge' | 'duplicate' | 'skip'
 
@@ -74,18 +73,13 @@ export function normalizePlaylists(value: unknown): Playlist[] {
   })
 }
 
-function load(): Playlist[] {
-  return loadJson(STORAGE_KEY, [], normalizePlaylists)
-}
+export function usePlaylists(storagePrefix: string) {
+  const storageKey = `${storagePrefix}-playlists`
+  const [playlists, setPlaylists] = useState<Playlist[]>(() =>
+    loadJson(storageKey, [], normalizePlaylists)
+  )
 
-function save(playlists: Playlist[]) {
-  saveJson(STORAGE_KEY, playlists)
-}
-
-export function usePlaylists() {
-  const [playlists, setPlaylists] = useState<Playlist[]>(() => load())
-
-  useEffect(() => { save(playlists) }, [playlists])
+  useEffect(() => { saveJson(storageKey, playlists) }, [storageKey, playlists])
 
   const createPlaylist = useCallback((rawName: string) => {
     const name = rawName.trim()

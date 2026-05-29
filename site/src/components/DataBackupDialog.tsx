@@ -2,11 +2,12 @@ import { useRef, useState } from 'react'
 import { downloadBackup, importBackup, type ImportBackupResult } from '../utils/dataBackup'
 
 interface Props {
+  storagePrefix: string
   onClose: () => void
   onImported: () => void
 }
 
-export function DataBackupDialog({ onClose, onImported }: Props) {
+export function DataBackupDialog({ storagePrefix, onClose, onImported }: Props) {
   const fileRef = useRef<HTMLInputElement>(null)
   const [result, setResult] = useState<ImportBackupResult | null>(null)
   const [confirming, setConfirming] = useState(false)
@@ -31,7 +32,7 @@ export function DataBackupDialog({ onClose, onImported }: Props) {
   }
 
   function handleConfirmImport() {
-    const r = importBackup(pendingRaw)
+    const r = importBackup(storagePrefix, pendingRaw)
     setResult(r)
     setConfirming(false)
     setPendingRaw(null)
@@ -68,7 +69,7 @@ export function DataBackupDialog({ onClose, onImported }: Props) {
         <div className="flex flex-col gap-2">
           <button
             type="button"
-            onClick={downloadBackup}
+            onClick={() => downloadBackup(storagePrefix)}
             className="w-full rounded-lg border border-violet-500/40 bg-violet-500/10 px-4 py-2 text-sm text-violet-200 hover:bg-violet-500/20 transition"
           >
             Exportar backup

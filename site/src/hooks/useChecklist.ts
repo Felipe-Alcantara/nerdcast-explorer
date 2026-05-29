@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { loadStringSet, saveStringSet } from '../utils/storage'
 
-const STORAGE_KEY = 'nerdcast-watched'
+export function useChecklist(storagePrefix: string) {
+  const storageKey = `${storagePrefix}-watched`
+  const [watched, setWatched] = useState<Set<string>>(() => loadStringSet(storageKey))
 
-export function useChecklist() {
-  const [watched, setWatched] = useState<Set<string>>(() => loadStringSet(STORAGE_KEY))
-
-  useEffect(() => { saveStringSet(STORAGE_KEY, watched) }, [watched])
+  useEffect(() => { saveStringSet(storageKey, watched) }, [storageKey, watched])
 
   const toggle = useCallback((id: string) => {
     setWatched(prev => {

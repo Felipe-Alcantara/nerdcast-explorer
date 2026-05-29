@@ -4,12 +4,14 @@ import { normalizeStringArray } from './storage'
 
 const BACKUP_VERSION = 1
 
-const KEYS = {
-  watched: 'nerdcast-watched',
-  liked: 'nerdcast-liked',
-  comments: 'nerdcast-episode-comments',
-  playlists: 'nerdcast-playlists',
-} as const
+function storageKeys(prefix: string) {
+  return {
+    watched: `${prefix}-watched`,
+    liked: `${prefix}-liked`,
+    comments: `${prefix}-episode-comments`,
+    playlists: `${prefix}-playlists`,
+  }
+}
 
 export interface BackupData {
   version: number
@@ -20,7 +22,9 @@ export interface BackupData {
   playlists: { id: string; name: string; episodeIds: string[] }[]
 }
 
-export function exportBackup(): BackupData {
+export function exportBackup(storagePrefix: string): BackupData {
+  const keys = storageKeys(storagePrefix)
+
   function read<T>(key: string, fallback: T): T {
     try {
       const raw = localStorage.getItem(key)
@@ -33,15 +37,15 @@ export function exportBackup(): BackupData {
   return {
     version: BACKUP_VERSION,
     exportedAt: new Date().toISOString(),
-    watched: normalizeStringArray(read(KEYS.watched, [])),
-    liked: normalizeStringArray(read(KEYS.liked, [])),
-    comments: normalizeEpisodeComments(read(KEYS.comments, {})),
-    playlists: normalizePlaylists(read(KEYS.playlists, [])),
+    watched: normalizeStringArray(read(keys.watched, [])),
+    liked: normalizeStringArray(read(keys.liked, [])),
+    comments: normalizeEpisodeComments(read(keys.comments, {})),
+    playlists: normalizePlaylists(read(keys.playlists, [])),
   }
 }
 
-export function downloadBackup(): void {
-  const data = exportBackup()
+export function downloadBackup(storagePrefix: string): void {
+  const data = exportBackup(storagePrefix)
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
   const date = new Date().toISOString().slice(0, 10)
@@ -63,7 +67,7 @@ export type ImportBackupResult = {
   error: string
 }
 
-export function importBackup(raw: unknown): ImportBackupResult {
+export function importBackup(storagePrefix: string, raw: unknown): ImportBackupResult {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
     return { ok: false, error: 'Arquivo inválido.' }
   }
@@ -74,16 +78,17 @@ export function importBackup(raw: unknown): ImportBackupResult {
     return { ok: false, error: 'Versão do backup não suportada.' }
   }
 
+  const keys = storageKeys(storagePrefix)
   const watched = normalizeStringArray(data.watched)
   const liked = normalizeStringArray(data.liked)
   const comments = normalizeEpisodeComments(data.comments)
   const playlists = normalizePlaylists(data.playlists)
 
   try {
-    localStorage.setItem(KEYS.watched, JSON.stringify(watched))
-    localStorage.setItem(KEYS.liked, JSON.stringify(liked))
-    localStorage.setItem(KEYS.comments, JSON.stringify(comments))
-    localStorage.setItem(KEYS.playlists, JSON.stringify(playlists))
+    localStorage.setItem(keys.watched, JSON.stringify(watched))
+    localStorage.setItem(keys.liked, JSON.stringify(liked))
+    localStorage.setItem(keys.comments, JSON.stringify(comments))
+    localStorage.setItem(keys.playlists, JSON.stringify(playlists))
   } catch {
     return { ok: false, error: 'Não foi possível salvar os dados.' }
   }

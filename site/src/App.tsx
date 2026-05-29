@@ -21,6 +21,7 @@ import {
 } from './utils/playlistShare'
 
 const PAGE_SIZE = 100
+const STORAGE_PREFIX = 'jab-saves'
 
 export default function App() {
   const [backupOpen, setBackupOpen] = useState(false)
@@ -34,9 +35,10 @@ export default function App() {
   const [importSummary, setImportSummary] = useState<ImportResult | null>(null)
 
   const { episodes, programs, themes, loading, error } = useEpisodeData()
-  const { toggle, isWatched, count: watchedCount } = useChecklist()
-  const { comments, setComment } = useEpisodeComments()
-  const { toggle: toggleLike, isLiked, count: likedCount } = useLikes()
+
+  const { toggle, isWatched, count: watchedCount } = useChecklist(STORAGE_PREFIX)
+  const { comments, setComment } = useEpisodeComments(STORAGE_PREFIX)
+  const { toggle: toggleLike, isLiked, count: likedCount } = useLikes(STORAGE_PREFIX)
   const {
     playlists,
     createPlaylist,
@@ -44,7 +46,7 @@ export default function App() {
     toggleEpisodeInPlaylist,
     importPlaylists,
     findPlaylistByName,
-  } = usePlaylists()
+  } = usePlaylists(STORAGE_PREFIX)
 
   const selectedPlaylist = useMemo(
     () => playlists.find(playlist => playlist.id === selectedPlaylistId) ?? null,
@@ -256,6 +258,7 @@ export default function App() {
 
       {backupOpen && (
         <DataBackupDialog
+          storagePrefix={STORAGE_PREFIX}
           onClose={() => setBackupOpen(false)}
           onImported={() => window.location.reload()}
         />
