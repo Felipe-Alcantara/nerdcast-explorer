@@ -41,3 +41,5 @@ Thumbs.db
 *.log
 npm-debug.log*
 /felixo-standards
+POST_REDDIT.md
+POST_X.md
